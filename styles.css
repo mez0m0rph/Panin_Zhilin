@@ -147,3 +147,36 @@ body {  /*общие стили*/
     cursor: pointer;
     display: block;
 }
+.grid-cell {  /*стиль клеток сетки (из А* алгоритма)*/
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.grid-cell.start-point {  /*стили стартовой точки (из А* алгоритма)*/
+    background-color: #4CAF50;  /*старт - зеленый*/
+}
+
+.grid-cell.end-point {  /*стили конечной точки (из А* алгоритма)*/
+    background-color: #F44336;  /*финиш - красный*/
+}
+
+.grid-cell.obstacle-cell {   /*стили точек-препятствий (из А* алгоритма)*/
+    background-color: #333;  /*препятствия - темные*/
+    cursor: not-allowed;   /*запрещающий курсор*/
+}
+
+.grid-cell.path-cell {  /*стили для найденного пути (из А* алгоритма)*/
+    background-color: #f76dd0;  /*путь - розовый)))*/
+}
+
+#gridDisplay {  /*стили для контейнера сетки (из А* алгоритма)*/
+    display: grid;
+    gap: 2px;
+    margin-top: 20px;
+}
+
+.hidden-element {  /*скрывать лишнее (из А* алгоритма)*/
+    display: none;
+}
