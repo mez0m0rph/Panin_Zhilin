@@ -14,12 +14,12 @@ body {
 
 .header-title {
     display: block;
-    width: fit-content; 
-    margin: 20px auto; 
+    width: fit-content;
+    margin: 20px auto;
     font-size: 60px;
-    padding: 4px 15px; 
+    padding: 4px 15px;
     background-color: #fa7f64;
-    border-radius: 10px; 
+    border-radius: 10px;
 }
 
 .section-title {
@@ -37,6 +37,8 @@ body {
 }
 
 .main-button {
+    position: relative;
+    overflow: hidden;
     font-family: Calibri;
     padding: 18px 38px;
     font-size: 30px;
@@ -46,6 +48,27 @@ body {
     border: none;
     cursor: pointer;
     transition: background-color 0.4s ease;
+}
+
+.main-button::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    opacity: 0;
+    transition: 
+        opacity 0.4s ease,
+        transform 0.4s ease;
+    transform: scale(0.95);
+}
+
+.main-button:hover::after {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .main-button:hover {
