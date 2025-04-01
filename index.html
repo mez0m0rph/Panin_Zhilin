@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Алгоритмический модуль</title>
+</head>
+<body>
+<h1 class="header-title">модуль 6</h1>
+<h2 class="section-title">алгоритмы</h2>
+
+<div class="main-buttons-container">
+  <button id="aStarButton" class="main-button"><span>А*</span></button>
+  <button class="main-button"><span>Кластер</span></button>
+  <button class="main-button"><span>Генетика</span></button>
+  <button class="main-button"><span>Муравей</span></button>
+  <button class="main-button"><span>Дерево</span></button>
+  <button class="main-button"><span>Нейронка</span></button>
+</div>
+
+<div id="aStarInterface" class="algorithm-interface">
+  <div class="input-group">
+    <input type="number" id="gridSizeInput" placeholder="Введите размер сетки">
+    <button id="generateGridButton" class="confirm-button">Построить</button>
+  </div>
+  <div id="gridDisplay" class="grid-container hidden-element"></div>
+  <button id="findPathButton" class="confirm-button hidden-element">Найти путь</button>
+</div>
+
+<script src="hotweb.js"></script>
+</body>
+</html>
