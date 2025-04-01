@@ -1,4 +1,3 @@
-/* style.css */
 body {  /*общие стили*/
     margin: 0;
     padding: 20px;
@@ -27,19 +26,18 @@ body {  /*общие стили*/
     padding: 10px 30px;
     background-color: #f09859;
     border-radius: 20px;
-    margin: 40px auto;
 }
 
 .main-buttons-container {  /*основыне кнопки(контейнер)*/
     display: flex;
     gap: 15px;
     justify-content: center;
-    margin: 40px 0;
+    margin: 30px 0;
 }
 
 .main-button {  /*стили кнопок*/
-    position: relative;
-    overflow: hidden;
+    position: relative;  /*позиционирование*/
+    overflow: hidden;  /*скрывать, что за границы выходит*/
     font-family: Calibri;
     padding: 18px 38px;
     font-size: 30px;
@@ -58,168 +56,127 @@ body {  /*общие стили*/
     left: -2px;
     right: -2px;
     bottom: -2px;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    opacity: 0;
+    border: 2px solid transparent;  /*прозрачность рамки (сначала)*/
+    border-radius: 10px;  /*скругление*/
+    opacity: 0;  /*начальное состояние*/
 }
 
 @keyframes circleBorder {  /*динамическая обводка кнопки*/
     0% {
-        opacity: 1;
+        opacity: 1;  /*сначала ничего не видно*/
         clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
     }
     25% {
-        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
+        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);  /*обводка появлется (сверху сначала)*/
         border-color: rgba(255, 255, 255, 0.3) transparent transparent transparent;
     }
     50% {
-        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);  /*обводка идет по часовой*/
         border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent transparent;
     }
     75% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);  /*низ обводки*/
         border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent;
     }
     100% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);  /*дозакрывает кнопку полностью*/
         border-color: rgba(255, 255, 255, 0.3);
         opacity: 1;
     }
 }
 
-.main-button:hover::before {
+.main-button:hover::before {  /*при наведении анимация работать начинает*/
     animation: circleBorder 1s ease-out forwards;
 }
 
-.main-button:hover {
+.main-button:hover {  /*цвет менять при наведении*/
     background-color: #fa7f64;
 }
 
-.main-button span {
+.main-button span {  /*стиль текста внутри кнопок*/
     position: relative;
     z-index: 1;
 }
 
-.input-group {  /*стили для ввода*/
-    background-color: #1959c0;
-    padding: 15px;
-    border-radius: 10px;
-    width: fit-content;
-    margin: 20px auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.input-group input {
-    padding: 12px 20px;
-    font-size: 20px;
-    border: none;
-    border-radius: 6px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-    font-family: Calibri;
-    transition: all 0.3s ease;
-    width: 120px;
-    text-align: center;
-}
-
-.input-group input:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 0 2px #fa7f64;
-}
-
-.confirm-button {  /*кнопка построить*/
-    position: relative;
-    overflow: hidden;
-    padding: 15px 35px;
-    font-size: 24px;
-    background-color: #fa7f64;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto;
-    transition: all 0.4s ease;
-    font-family: Calibri;
-}
-
-.confirm-button:hover {
-    background-color: #f86a4c;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(250, 127, 100, 0.4);
-}
-
-.confirm-button::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    opacity: 0;
-}
-
-.confirm-button:hover::before {
-    animation: circleBorder 1s ease-out forwards;
-}
-
-.algorithm-interface {
+.algorithm-interface {  /*стиль интерфейса алгоритма*/
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
 }
 
-.algorithm-interface.show {
+.algorithm-interface.show {  /*отображает интерфейс при show*/
     opacity: 1;
     visibility: visible;
 }
+ 
+.input-group {  /*стили для ввода*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    gap: 10px;
+}
 
-.grid-container {
+.grid-container {  /*стили контейнера сетки*/
     display: grid;
     gap: 2px;
     margin: 15px auto;
     justify-content: center;
 }
 
-.grid-cell {
+.grid-cell {  /*стили ячеек сетки*/
     width: 40px;
     height: 40px;
     cursor: pointer;
     background-color: lightgray;
     transition: background-color 0.3s ease;
+}
+
+.hidden-element {  /*скрытые элементы*/
+    display: none;
+}
+
+.confirm-button {  /*стили кнопок подтверждения*/
+    margin: 15px auto;
+    padding: 8px 20px;
+    font-size: 15px;
+    background-color: #1959c0;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    display: block;
+}
+.grid-cell {  /*стиль клеток сетки (из А* алгоритма)*/
+    width: 40px;
+    height: 40px;
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
 
-.hidden-element {
-    display: none;
+.grid-cell.start-point {  /*стили стартовой точки (из А* алгоритма)*/
+    background-color: #4CAF50;  /*старт - зеленый*/
 }
 
-.grid-cell.start-point {
-    background-color: #4CAF50;
+.grid-cell.end-point {  /*стили конечной точки (из А* алгоритма)*/
+    background-color: #F44336;  /*финиш - красный*/
 }
 
-.grid-cell.end-point {
-    background-color: #F44336;
+.grid-cell.obstacle-cell {   /*стили точек-препятствий (из А* алгоритма)*/
+    background-color: #333;  /*препятствия - темные*/
+    cursor: not-allowed;   /*запрещающий курсор*/
 }
 
-.grid-cell.obstacle-cell {
-    background-color: #333;
-    cursor: not-allowed;
+.grid-cell.path-cell {  /*стили для найденного пути (из А* алгоритма)*/
+    background-color: #f76dd0;  /*путь - розовый)))*/
 }
 
-.grid-cell.path-cell {
-    background-color: #f76dd0;
-}
-
-#gridDisplay {
+#gridDisplay {  /*стили для контейнера сетки (из А* алгоритма)*/
     display: grid;
     gap: 2px;
     margin-top: 20px;
+}
+
+.hidden-element {  /*скрывать лишнее (из А* алгоритма)*/
+    display: none;
 }
