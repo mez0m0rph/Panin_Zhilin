@@ -40,6 +40,10 @@ const App = {  /*для визуализации поиска пути на се
     this.elements.findPathButton.addEventListener('click', () => {  /*искать путь при нажатии*/
       this.findPath();
     });
+
+    this.elements.gridDisplay.addEventListener('click', (event) => {  /*клик переносится на контейнер сетки*/
+      this.handleCellClick(event);
+    })
   },
 
   generateGrid() {  /*генерить сетку*/
@@ -61,7 +65,6 @@ const App = {  /*для визуализации поиска пути на се
       cell.className = 'grid-cell';
       cell.dataset.x = Math.floor(i / size);  /*считать координаты клетки по индексам*/
       cell.dataset.y = i % size;
-      cell.addEventListener('click', (event) => this.handleCellClick(event)); /*для выбора клетки*/
       this.elements.gridDisplay.appendChild(cell);
     }
 
