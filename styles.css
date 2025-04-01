@@ -50,25 +50,45 @@ body {
     transition: background-color 0.4s ease;
 }
 
-.main-button::after {
+/* Анимация круговой обводки */
+.main-button::before {
     content: '';
     position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
+    border: 2px solid transparent;
+    border-radius: 10px;
     opacity: 0;
-    transition: 
-        opacity 0.4s ease,
-        transform 0.4s ease;
-    transform: scale(0.95);
 }
 
-.main-button:hover::after {
-    opacity: 1;
-    transform: scale(1);
+@keyframes circleBorder {
+    0% {
+        opacity: 1;
+        clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    }
+    25% {
+        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
+        border-color: rgba(255, 255, 255, 0.3) transparent transparent transparent;
+    }
+    50% {
+        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+        border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent transparent;
+    }
+    75% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent;
+    }
+    100% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+        opacity: 1;
+    }
+}
+
+.main-button:hover::before {
+    animation: circleBorder 1.2s ease-out forwards;
 }
 
 .main-button:hover {
