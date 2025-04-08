@@ -1,82 +1,149 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f7f7f7;
     margin: 0;
-    padding: 0;
+    padding: 20px;
+    color: white;
+    background-color: #669;
+    font-family: Calibri;
 }
 
-.site-header {
-    text-align: center;
-    color: #222;
-    margin-top: 20px;
-}
-
-.sub-header {
-    text-align: center;
-    color: #444;
-    margin-bottom: 20px;
-}
-
-.btn-container {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.action-btn {
-    background-color: #0066cc;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin: 0 10px;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.action-btn:hover {
-    background-color: #004a99;
-}
-
-.algorithm-section {
-    display: none;
-    text-align: center;
-    margin-top: 20px;
-}
-
-.algorithm-section.active {
+.header-title, .section-title {
     display: block;
-}
-
-.grid-layout {
-    display: grid;
-    gap: 1px;
-    justify-content: center;
+    text-align: center;
     margin: 20px auto;
 }
 
-.hidden {
+.header-title {
+    width: fit-content;
+    margin: 20px auto;
+    font-size: 60px;
+    padding: 4px 15px;
+    background-color: #fa7f64;
+    border-radius: 10px;
+}
+
+.section-title {
+    font-size: 40px;
+    padding: 10px 30px;
+    background-color: #f09859;
+    border-radius: 20px;
+}
+
+.main-buttons-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.main-button {
+    position: relative;
+    overflow: hidden;
+    font-family: Calibri;
+    padding: 18px 38px;
+    font-size: 30px;
+    color: white;
+    background-color: #1959c0;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+}
+
+.main-button::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    opacity: 0;
+}
+
+@keyframes circleBorder {
+    0% {
+        opacity: 1;
+        clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    }
+    25% {
+        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
+        border-color: rgba(255, 255, 255, 0.3) transparent transparent transparent;
+    }
+    50% {
+        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+        border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent transparent;
+    }
+    75% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent;
+    }
+    100% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+        opacity: 1;
+    }
+}
+
+.main-button:hover::before {
+    animation: circleBorder 1s ease-out forwards;
+}
+
+.main-button:hover {
+    background-color: #fa7f64;
+}
+
+.main-button span {
+    position: relative;
+    z-index: 1;
+}
+
+.algorithm-interface {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+}
+
+.algorithm-interface.show {
+    opacity: 1;
+    visibility: visible;
+}
+ 
+.input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+.grid-container {
+    display: grid;
+    gap: 2px;
+    margin: 15px auto;
+    justify-content: center;
+}
+
+.grid-cell {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background-color: lightgray;
+    transition: background-color 0.3s ease;
+}
+
+.hidden-element {
     display: none;
 }
 
-.submit-btn {
-    background-color: #28a745;
-    color: #fff;
+.confirm-button {
+    margin: 15px auto;
+    padding: 8px 20px;
+    font-size: 15px;
+    background-color: #1959c0;
     border: none;
-    padding: 10px 15px;
     border-radius: 5px;
-    font-size: 14px;
+    color: white;
     cursor: pointer;
-    margin: 5px;
-}
-
-.submit-btn:hover {
-    background-color: #218838;
-}
-
-#geneticCanvas {
     display: block;
-    margin: 0 auto;
-    background-color: #fff;
-    border: 1px solid #000;
 }
