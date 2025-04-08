@@ -36,8 +36,8 @@ body {  /*общие стили*/
 }
 
 .main-button {  /*стили кнопок*/
-    position: relative;  /*позиционирование*/
-    overflow: hidden;  /*скрывать, что за границы выходит*/
+    position: relative;
+    overflow: hidden;
     font-family: Calibri;
     padding: 18px 38px;
     font-size: 30px;
@@ -49,67 +49,66 @@ body {  /*общие стили*/
     transition: background-color 0.4s ease;
 }
 
-.main-button::before {  /*обводка для кнопок*/
+.main-button::before {
     content: '';
     position: absolute;
     top: -2px;
     left: -2px;
     right: -2px;
     bottom: -2px;
-    border: 2px solid transparent;  /*прозрачность рамки (сначала)*/
-    border-radius: 10px;  /*скругление*/
-    opacity: 0;  /*начальное состояние*/
+    border: 2px solid transparent;
+    border-radius: 10px;
+    opacity: 0;
 }
 
-@keyframes circleBorder {  /*динамическая обводка кнопки*/
+@keyframes circleBorder {
     0% {
-        opacity: 1;  /*сначала ничего не видно*/
+        opacity: 1;
         clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
     }
     25% {
-        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);  /*обводка появлется (сверху сначала)*/
+        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
         border-color: rgba(255, 255, 255, 0.3) transparent transparent transparent;
     }
     50% {
-        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);  /*обводка идет по часовой*/
+        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
         border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent transparent;
     }
     75% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);  /*низ обводки*/
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent;
     }
     100% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);  /*дозакрывает кнопку полностью*/
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
         border-color: rgba(255, 255, 255, 0.3);
         opacity: 1;
     }
 }
 
-.main-button:hover::before {  /*при наведении анимация работать начинает*/
+.main-button:hover::before {
     animation: circleBorder 1s ease-out forwards;
 }
 
-.main-button:hover {  /*цвет менять при наведении*/
+.main-button:hover {
     background-color: #fa7f64;
 }
 
-.main-button span {  /*стиль текста внутри кнопок*/
+.main-button span {
     position: relative;
     z-index: 1;
 }
 
-.algorithm-interface {  /*стиль интерфейса алгоритма*/
+.algorithm-interface {  
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
 }
-
-.algorithm-interface.show {  /*отображает интерфейс при show*/
+.algorithm-interface.show {
     opacity: 1;
     visibility: visible;
 }
- 
-.input-group {  /*стили для ввода*/
+
+.input-group {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -117,14 +116,14 @@ body {  /*общие стили*/
     gap: 10px;
 }
 
-.grid-container {  /*стили контейнера сетки*/
+.grid-container {  
     display: grid;
     gap: 2px;
     margin: 15px auto;
     justify-content: center;
 }
 
-.grid-cell {  /*стили ячеек сетки*/
+.grid-cell {  
     width: 40px;
     height: 40px;
     cursor: pointer;
@@ -132,11 +131,11 @@ body {  /*общие стили*/
     transition: background-color 0.3s ease;
 }
 
-.hidden-element {  /*скрытые элементы*/
+.hidden-element {  
     display: none;
 }
 
-.confirm-button {  /*стили кнопок подтверждения*/
+.confirm-button {  
     margin: 15px auto;
     padding: 8px 20px;
     font-size: 15px;
