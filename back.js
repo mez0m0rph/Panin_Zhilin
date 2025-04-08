@@ -12,6 +12,7 @@ function showInterface(section) {
 aStarButton.addEventListener('click', () => showInterface(aStarInterface));
 geneticButton.addEventListener('click', () => showInterface(geneticInterface));
 
+/* --- Алгоритм A* --- */
 let gridSize = 0;
 let grid = [];
 let startCell = null;
@@ -30,10 +31,10 @@ generateGridButton.addEventListener('click', () => {
   findPathButton.classList.remove('hidden-element');
   startCell = null;
   endCell = null;
+  gridDisplay.style.display = 'grid';
+  gridDisplay.style.gridTemplateColumns = `repeat(${gridSize}, 40px)`;
   for(let i = 0; i < gridSize; i++){
     let row = [];
-    let rowDiv = document.createElement('div');
-    rowDiv.style.display = 'flex';
     for(let j = 0; j < gridSize; j++){
       let cell = {i, j, type: 'empty'};
       row.push(cell);
@@ -59,10 +60,9 @@ generateGridButton.addEventListener('click', () => {
           cellDiv.style.backgroundColor = 'black';
         }
       });
-      rowDiv.appendChild(cellDiv);
+      gridDisplay.appendChild(cellDiv);
     }
     grid.push(row);
-    gridDisplay.appendChild(rowDiv);
   }
 });
 
@@ -139,6 +139,7 @@ function drawPath(path) {
 
 findPathButton.addEventListener('click', runAStar);
 
+/* --- Генетический алгоритм --- */
 const canvas = document.getElementById('geneticCanvas');
 const ctx = canvas.getContext('2d');
 const runGenAlgoBtn = document.getElementById('runGenAlgoBtn');
