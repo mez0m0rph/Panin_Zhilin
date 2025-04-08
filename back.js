@@ -4,15 +4,14 @@ const sectionAStar = document.getElementById('sectionAStar');
 const sectionGenetic = document.getElementById('sectionGenetic');
 
 function displayInterface(selectedSection) {
-    sectionAStar.classList.remove('active');
-    sectionGenetic.classList.remove('active');
-    selectedSection.classList.add('active');
+    sectionAStar.classList.remove('show');
+    sectionGenetic.classList.remove('show');
+    selectedSection.classList.add('show');
 }
 
 btnAStar.addEventListener('click', () => {
     displayInterface(sectionAStar);
 });
-
 btnGenetic.addEventListener('click', () => {
     displayInterface(sectionGenetic);
 });
@@ -22,6 +21,7 @@ const ctxGenetic = canvasGenetic.getContext('2d');
 const runGenAlgoBtn = document.getElementById('runGenAlgoBtn');
 const resetGenAlgoBtn = document.getElementById('resetGenAlgoBtn');
 const bestDistanceDisplay = document.getElementById('bestDistanceDisplay');
+
 let cityCoords = [];
 let populationRoutes = [];
 let bestRoute = null;
