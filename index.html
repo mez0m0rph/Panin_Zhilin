@@ -9,7 +9,6 @@
 <body>
     <h1 class="header-title">модуль 6</h1>
     <h2 class="section-title">алгоритмы</h2>
-
     <div class="main-buttons-container">
         <button id="aStarButton" class="main-button"><span>А*</span></button>
         <button class="main-button"><span>Кластер</span></button>
@@ -19,6 +18,7 @@
         <button class="main-button"><span>Нейронка</span></button>
     </div>
 
+    <!-- Интерфейс для алгоритма A* -->
     <div id="aStarInterface" class="algorithm-interface">
         <div class="input-group">
             <input type="number" id="gridSizeInput" placeholder="Введите размер сетки">
@@ -28,6 +28,7 @@
         <button id="findPathButton" class="confirm-button hidden-element">Найти путь</button>
     </div>
 
+    <!-- Интерфейс для генетического алгоритма -->
     <div id="geneticInterface" class="algorithm-interface">
         <p style="text-align: center;">Кликните по полю ниже, чтобы добавить точки (города).</p>
         <canvas id="geneticCanvas" width="600" height="400" style="display: block; margin: 0 auto; background: #fff; border:1px solid #000;"></canvas>
