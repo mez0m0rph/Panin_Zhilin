@@ -1,33 +1,39 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="styles.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Алгоритмический модуль</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Алгоритмический модуль</title>
 </head>
 <body>
-<h1 class="header-title">модуль 6</h1>
-<h2 class="section-title">алгоритмы</h2>
-
-<div class="main-buttons-container">
-  <button id="aStarButton" class="main-button"><span>А*</span></button>
-  <button class="main-button"><span>Кластер</span></button>
-  <button class="main-button"><span>Генетика</span></button>
-  <button class="main-button"><span>Муравей</span></button>
-  <button class="main-button"><span>Дерево</span></button>
-  <button class="main-button"><span>Нейронка</span></button>
-</div>
-
-<div id="aStarInterface" class="algorithm-interface">
-  <div class="input-group">
-    <input type="number" id="gridSizeInput" placeholder="Введите размер сетки">
-    <button id="generateGridButton" class="confirm-button">Построить</button>
-  </div>
-  <div id="gridDisplay" class="grid-container hidden-element"></div>
-  <button id="findPathButton" class="confirm-button hidden-element">Найти путь</button>
-</div>
-
-<script src="back.js"></script>
+    <h1 class="site-header">модуль 6</h1>
+    <h2 class="sub-header">алгоритмы</h2>
+    <div class="btn-container">
+        <button id="btnAStar" class="action-btn"><span>А*</span></button>
+        <button class="action-btn"><span>Кластер</span></button>
+        <button id="btnGenetic" class="action-btn"><span>Генетика</span></button>
+        <button class="action-btn"><span>Муравей</span></button>
+        <button class="action-btn"><span>Дерево</span></button>
+        <button class="action-btn"><span>Нейронка</span></button>
+    </div>
+    <div id="sectionAStar" class="algorithm-section">
+        <div class="input-group">
+            <input type="number" id="inputGridSize" placeholder="Введите размер сетки">
+            <button id="btnGenerateGrid" class="submit-btn">Построить</button>
+        </div>
+        <div id="displayGrid" class="grid-layout hidden"></div>
+        <button id="btnFindPath" class="submit-btn hidden">Найти путь</button>
+    </div>
+    <div id="sectionGenetic" class="algorithm-section">
+        <p style="text-align: center;">Кликните по полю ниже, чтобы добавить точки (города).</p>
+        <canvas id="geneticCanvas" width="600" height="400" style="display: block; margin: 0 auto; background: #fff; border:1px solid #000;"></canvas>
+        <div style="text-align: center; margin-top: 10px;">
+            <button id="runGenAlgoBtn" class="submit-btn">Запустить генетический алгоритм</button>
+            <button id="resetGenAlgoBtn" class="submit-btn">Сбросить</button>
+        </div>
+        <p id="bestDistanceDisplay" style="text-align: center; margin-top: 10px;"></p>
+    </div>
+    <script src="hotweb.js"></script>
 </body>
 </html>
