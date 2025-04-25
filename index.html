@@ -7,38 +7,90 @@
     <title>Алгоритмический модуль</title>
 </head>
 <body>
-    <h1 class="header-title">модуль 6</h1>
-    <h2 class="section-title">алгоритмы</h2>
+    <h1 class="header-title">Модуль 6</h1>
+    <h2 class="section-title">Алгоритмы</h2>
+
     <div class="main-buttons-container">
-        <button id="aStarButton" class="main-button"><span>А*</span></button>
-        <button class="main-button"><span>Кластер</span></button>
-        <button id="geneticButton" class="main-button"><span>Генетика</span></button>
-        <button class="main-button"><span>Муравей</span></button>
-        <button class="main-button"><span>Дерево</span></button>
-        <button class="main-button"><span>Нейронка</span></button>
+        <button id="aStarButton" data-algo="aStarInterface" class="main-button algo-btn"><span>А*</span></button>
+        <button id="kMeansButton" data-algo="kMeansInterface" class="main-button algo-btn"><span>Кластер</span></button>
+        <button id="geneticButton" data-algo="geneticInterface" class="main-button algo-btn"><span>Генетика</span></button>
+        <button id="antButton" data-algo="antInterface" class="main-button algo-btn"><span>Муравей</span></button>
+        <button id="treeButton" data-algo="treeInterface" class="main-button algo-btn"><span>Дерево</span></button>
+        <button id="nnButton" data-algo="nnInterface" class="main-button algo-btn"><span>Нейронка</span></button>
     </div>
 
     <!-- Интерфейс для алгоритма A* -->
-    <div id="aStarInterface" class="algorithm-interface">
+    <div id="aStarInterface" class="algorithm-interface hidden-element">
         <div class="input-group">
             <input type="number" id="gridSizeInput" placeholder="Введите размер сетки">
             <button id="generateGridButton" class="confirm-button">Построить</button>
         </div>
-        <div id="gridDisplay" class="grid-container hidden-element"></div>
-        <button id="findPathButton" class="confirm-button hidden-element">Найти путь</button>
+        <div id="gridDisplay" class="grid-container"></div>
+        <button id="findPathButton" class="confirm-button">Найти путь</button>
+    </div>
+
+    <!-- Интерфейс для кластеризации K-Means -->
+    <div id="kMeansInterface" class="algorithm-interface hidden-element">
+        <div class="input-group">
+            <label for="kmeans-point-count">Число точек:</label>
+            <input type="number" id="kmeans-point-count" min="1" value="50">
+        </div>
+        <div class="input-group">
+            <label for="kmeans-k">Число кластеров (k):</label>
+            <input type="number" id="kmeans-k" min="1" value="3">
+        </div>
+        <div class="input-group">
+            <button id="kmeansGenerateBtn" class="confirm-button">Генерировать точки</button>
+            <button id="kmeansRunBtn" class="confirm-button">Запустить</button>
+        </div>
+        <canvas id="kmeansCanvas" width="800" height="600"></canvas>
     </div>
 
     <!-- Интерфейс для генетического алгоритма -->
-    <div id="geneticInterface" class="algorithm-interface">
+    <div id="geneticInterface" class="algorithm-interface hidden-element">
         <p style="text-align: center;">Кликните по полю ниже, чтобы добавить точки (города).</p>
-        <canvas id="geneticCanvas" width="600" height="400" style="display: block; margin: 0 auto; background: #fff; border:1px solid #000;"></canvas>
-        <div style="text-align: center; margin-top: 10px;">
+        <canvas id="geneticCanvas" width="600" height="400"></canvas>
+        <div class="input-group" style="text-align: center; margin-top: 10px;">
             <button id="runGenAlgoBtn" class="confirm-button">Запустить генетический алгоритм</button>
             <button id="resetGenAlgoBtn" class="confirm-button">Сбросить</button>
         </div>
         <p id="bestDistanceDisplay" style="text-align: center; margin-top: 10px;"></p>
     </div>
 
+    <!-- Интерфейс для муравьиного алгоритма ACO -->
+    <div id="antInterface" class="algorithm-interface hidden-element">
+        <div class="input-group">
+            <label for="ant-city-count">Число городов:</label>
+            <input type="number" id="ant-city-count" min="2" value="10">
+        </div>
+        <div class="input-group">
+            <label for="ant-count">Число муравьев:</label>
+            <input type="number" id="ant-count" min="1" value="20">
+        </div>
+        <div class="input-group">
+            <label for="ant-alpha">Alpha:</label>
+            <input type="number" id="ant-alpha" step="0.1" value="1">
+        </div>
+        <div class="input-group">
+            <label for="ant-beta">Beta:</label>
+            <input type="number" id="ant-beta" step="0.1" value="2">
+        </div>
+        <div class="input-group">
+            <label for="ant-rho">Rho:</label>
+            <input type="number" id="ant-rho" step="0.05" value="0.5">
+        </div>
+        <div class="input-group">
+            <label for="ant-iterations">Итераций:</label>
+            <input type="number" id="ant-iterations" min="1" value="100">
+        </div>
+        <div class="input-group">
+            <button id="generateAntBtn" class="confirm-button">Генерировать</button>
+            <button id="runAntBtn" class="confirm-button">Запустить</button>
+        </div>
+        <canvas id="antCanvas" width="800" height="600"></canvas>
+    </div>
+
     <script src="back.js"></script>
 </body>
 </html>
+
