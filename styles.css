@@ -1,108 +1,63 @@
-body {  /*общие стили*/
+body {
     margin: 0;
     padding: 20px;
     color: white;
     background-color: #669;
-    font-family: Calibri;
+    font-family: Calibri, sans-serif;
 }
 
-.header-title, .section-title {  /*заголовочные стили*/
-    display: block;
+.header-title,
+.section-title {
     text-align: center;
     margin: 20px auto;
 }
 
-.header-title {  /*верхний заголовок*/
-    width: fit-content;
-    margin: 20px auto;
+.header-title {
     font-size: 60px;
     padding: 4px 15px;
     background-color: #fa7f64;
     border-radius: 10px;
+    display: inline-block;
 }
 
-.section-title {  /*секционные заголовки*/
+.section-title {
     font-size: 40px;
     padding: 10px 30px;
     background-color: #f09859;
     border-radius: 20px;
+    display: inline-block;
 }
 
-.main-buttons-container {  /*основыне кнопки(контейнер)*/
+.main-buttons-container {
     display: flex;
-    gap: 15px;
     justify-content: center;
+    gap: 15px;
     margin: 30px 0;
 }
 
-.main-button {  /*стили кнопок*/
+.main-button {
     position: relative;
-    overflow: hidden;
-    font-family: Calibri;
     padding: 18px 38px;
     font-size: 30px;
     color: white;
     background-color: #1959c0;
-    border-radius: 8px;
     border: none;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.4s ease;
-}
-
-.main-button::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    opacity: 0;
-}
-
-@keyframes circleBorder {
-    0% {
-        opacity: 1;
-        clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%);
-    }
-    25% {
-        clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
-        border-color: rgba(255, 255, 255, 0.3) transparent transparent transparent;
-    }
-    50% {
-        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
-        border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent transparent;
-    }
-    75% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.3) transparent;
-    }
-    100% {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-        border-color: rgba(255, 255, 255, 0.3);
-        opacity: 1;
-    }
-}
-
-.main-button:hover::before {
-    animation: circleBorder 1s ease-out forwards;
+    transition: background-color 0.4s;
 }
 
 .main-button:hover {
     background-color: #fa7f64;
 }
 
-.main-button span {
-    position: relative;
-    z-index: 1;
-}
-
-.algorithm-interface {  
+.algorithm-interface {
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+    transition: opacity 0.3s, visibility 0.3s;
+    margin-top: 20px;
 }
+
 .algorithm-interface.show {
     opacity: 1;
     visibility: visible;
@@ -110,123 +65,44 @@ body {  /*общие стили*/
 
 .input-group {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 15px;
     gap: 10px;
-}
-
-.grid-container {  
-    display: grid;
-    gap: 2px;
-    margin: 15px auto;
     justify-content: center;
+    margin: 10px 0;
 }
 
-.grid-cell {  
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    background-color: lightgray;
-    transition: background-color 0.3s ease;
-}
-
-.hidden-element {  
-    display: none;
-}
-
-.confirm-button {  
-    margin: 15px auto;
+.confirm-button {
     padding: 8px 20px;
-    font-size: 15px;
     background-color: #1959c0;
+    color: white;
     border: none;
     border-radius: 5px;
-    color: white;
     cursor: pointer;
-    display: block;
+    transition: background-color 0.3s;
 }
 
-/* ==================== K-Means Styles ==================== */
-#kmeans-interface {  /* контейнер интерфейса кластеризации */
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    margin: 20px auto;
-    max-width: 800px;
-}
-#kmeans-canvas {  /* холст для визуализации кластеров */
-    display: block;
-    margin: 15px auto;
-    border: 2px solid #f09859;
-    border-radius: 10px;
-    background-color: #fff;
-}
-#kmeans-interface .input-group {  /* стилизованные группы ввода */
-    margin-bottom: 10px;
-}
-#kmeans-interface .input-group label {  /* подписи полей ввода */
-    font-size: 18px;
-    margin-right: 5px;
-}
-#kmeans-interface .input-group input {  /* сами поля ввода */
-    width: 60px;
-    padding: 5px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-#kmeans-generate, #kmeans-run {  /* кнопки управления кластеризацией */
-    padding: 8px 16px;
-    font-size: 16px;
-    background-color: #f09859;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-#kmeans-generate:hover, #kmeans-run:hover {
+.confirm-button:hover {
     background-color: #fa7f64;
 }
 
-/* ==================== Ant Colony Styles ==================== */
-#ant-interface {  /* контейнер муравьиного алгоритма */
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    margin: 20px auto;
-    max-width: 900px;
-}
-#ant-canvas {  /* холст для визуализации тура муравьев */
-    display: block;
+.grid-container {
+    display: grid;
+    gap: 2px;
+    justify-content: center;
     margin: 15px auto;
-    border: 2px solid #8bc34a;
-    border-radius: 10px;
-    background-color: #fff;
 }
-#ant-interface .input-group {  /* группы ввода для параметров */
-    margin-bottom: 8px;
-}
-#ant-interface .input-group label {
-    font-size: 16px;
-    margin-right: 6px;
-}
-#ant-interface .input-group input {
-    width: 50px;
-    padding: 4px;
-    border-radius: 3px;
-    border: 1px solid #ccc;
-}
-#ant-generate, #ant-run {  /* кнопки управления ACO */
-    padding: 6px 14px;
-    font-size: 15px;
-    background-color: #8bc34a;
-    border: none;
-    border-radius: 4px;
-    color: white;
+
+.grid-cell {
+    width: 40px;
+    height: 40px;
+    background-color: lightgray;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
-#ant-generate:hover, #ant-run:hover {
-    background-color: #9ccc65;
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #000;
 }
