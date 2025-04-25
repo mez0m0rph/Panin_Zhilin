@@ -95,7 +95,9 @@ body {
   transition: background 0.2s;
 }
 
+/* Важное: канвас поверх и без дополнительных слоёв */
 canvas {
+  position: relative;
   display: block;
   margin: 0 auto;
   background: #fff;
