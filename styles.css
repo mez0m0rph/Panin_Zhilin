@@ -146,3 +146,87 @@ body {  /*общие стили*/
     cursor: pointer;
     display: block;
 }
+
+/* ==================== K-Means Styles ==================== */
+#kmeans-interface {  /* контейнер интерфейса кластеризации */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    margin: 20px auto;
+    max-width: 800px;
+}
+#kmeans-canvas {  /* холст для визуализации кластеров */
+    display: block;
+    margin: 15px auto;
+    border: 2px solid #f09859;
+    border-radius: 10px;
+    background-color: #fff;
+}
+#kmeans-interface .input-group {  /* стилизованные группы ввода */
+    margin-bottom: 10px;
+}
+#kmeans-interface .input-group label {  /* подписи полей ввода */
+    font-size: 18px;
+    margin-right: 5px;
+}
+#kmeans-interface .input-group input {  /* сами поля ввода */
+    width: 60px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+#kmeans-generate, #kmeans-run {  /* кнопки управления кластеризацией */
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #f09859;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#kmeans-generate:hover, #kmeans-run:hover {
+    background-color: #fa7f64;
+}
+
+/* ==================== Ant Colony Styles ==================== */
+#ant-interface {  /* контейнер муравьиного алгоритма */
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    margin: 20px auto;
+    max-width: 900px;
+}
+#ant-canvas {  /* холст для визуализации тура муравьев */
+    display: block;
+    margin: 15px auto;
+    border: 2px solid #8bc34a;
+    border-radius: 10px;
+    background-color: #fff;
+}
+#ant-interface .input-group {  /* группы ввода для параметров */
+    margin-bottom: 8px;
+}
+#ant-interface .input-group label {
+    font-size: 16px;
+    margin-right: 6px;
+}
+#ant-interface .input-group input {
+    width: 50px;
+    padding: 4px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+#ant-generate, #ant-run {  /* кнопки управления ACO */
+    padding: 6px 14px;
+    font-size: 15px;
+    background-color: #8bc34a;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+#ant-generate:hover, #ant-run:hover {
+    background-color: #9ccc65;
+}
