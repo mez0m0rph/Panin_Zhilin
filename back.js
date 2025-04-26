@@ -180,18 +180,20 @@ class AStar {  // А* (построение пути на сетке)
   }
 }
 
-
-//////////////////////////////////
-// Генетический алгоритм (TSP)
-//////////////////////////////////
-class GeneticTSP {
+class GeneticTSP {  // генетика
+              // логика: инициализируем популяцию случайных маршрутов
+              // для каждого поколения считаем длину маршрута
+              // сортируем по лучшей длине
+              // сохраняем лучший 
+              // отбираем 20%
+              // кроссовер и мутация для заполнения популяции 
+              // рисуем лучший маршрут и выводим длину
   constructor() {
-    // DOM-элементы:
-    this.canvas    = document.getElementById('geneticCanvas');
-    this.ctx       = this.canvas.getContext('2d');
-    this.runBtn    = document.getElementById('runGeneticBtn');
-    this.resetBtn  = document.getElementById('resetGeneticBtn');
-    this.outputEl  = document.getElementById('bestDistanceDisplay');
+    this.canvas = document.getElementById('geneticCanvas'); // dom-элементы
+    this.ctx = this.canvas.getContext('2d');
+    this.runBtn = document.getElementById('runGeneticBtn');
+    this.resetBtn = document.getElementById('resetGeneticBtn');
+    this.outputEl = document.getElementById('bestDistanceDisplay');
 
     // Данные:
     this.cities    = [];    // [{x, y}, ...]
