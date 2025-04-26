@@ -170,16 +170,15 @@ const AlgorithmUI = {  // переключение между интерфейс
   }
 
   
-   reconstruct(cameFrom, current) {  // восстановление пути
-                  // логика: идем от старта к финишу, цвета старта и финиша не меняем
-    while (cameFrom.has(current)) {  // с конечной проходим 
+  reconstruct(cameFrom, current) {  // восстановление пути
+    while (cameFrom.has(current)) {
       if (current !== this.end) {
-        current.elem.style.background = '#f1c40f'; // путь в желтый
+        current.elem.style.background = '#f1c40f'; // желтый цвет пути
       }
-      current = cameFrom.get(current);  // когда цикл прошли, current равен старту
+      current = cameFrom.get(current);
     }
   }
-
+}
   
   //////////////////////////////////
   // K-Means кластеризация
