@@ -6,27 +6,34 @@ const AlgorithmUI = {
    * Скрываем все панели .algorithm-interface и показываем только одну
    * @param {string} id — id блока, который нужно показать
    */
-  switchAlgorithm(id) {
+  switchAlgorithm(id) {  // у всех элементов .algorithm-interface убираем css-класс show, 
+                         // а потом добавляем show к блоку, чей id передается (чтобы при нажатии на алгоритм
+                         // отображался только нужный раздел, а остальные были скрыты)
     document.querySelectorAll('.algorithm-interface').forEach(el => el.classList.remove('show'));
     const panel = document.getElementById(id);
     if (panel) panel.classList.add('show');
   }
 };
-// Навешиваем обработчик на все кнопки .algo-btn
-document.querySelectorAll('.algo-btn').forEach(btn =>
+
+document.querySelectorAll('.algo-btn').forEach(btn =>  // добавляем обработчик на все кнопки algo-btn
+                                                       // на каждую кнопку algo-btn вешаем обработчик клика
+                                                       // он вызывает switchAlgorithm, передает значение data-algo
+                                                       // (чтобы кнопки отображали нужные панели)
   btn.addEventListener('click', () => AlgorithmUI.switchAlgorithm(btn.dataset.algo))
 );
 
 
-//////////////////////////////////
-// Алгоритм A* — поиск кратчайшего пути на сетке
-//////////////////////////////////
-class AStar {
+class AStar {  // А* (построение пути на сетке)
   constructor() {
-    // DOM-элементы:
-    this.sizeInput     = document.getElementById('gridSizeInput');
-    this.generateBtn   = document.getElementById('generateGridButton');
-    this.findBtn       = document.getElementById('findPathButton');
+    // dom-элементы (узлы html, через них читать/менять свойства/атрибуты)
+    this.sizeInput = document.getElementById('gridSizeInput');  
+                        // сейвит ссылки на поля ввода/кнопки в свойства объекта 
+                        // (чтобы дальше с ними работать)
+    this.generateBtn = document.getElementById('generateGridButton');
+                        // при клике вызывает createGrid
+                        // считывает размер введенной сетки, чистит прошлую
+                        // создает новую
+    this.findBtn = document.getElementById('findPathButton');
     this.gridContainer = document.getElementById('gridDisplay');
 
     // Внутренние данные:
