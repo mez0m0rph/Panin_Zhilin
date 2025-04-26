@@ -1,11 +1,4 @@
-///////////////////////////////////////
-// UI: переключение между интерфейсами
-///////////////////////////////////////
-const AlgorithmUI = {
-  /**
-   * Скрываем все панели .algorithm-interface и показываем только одну
-   * @param {string} id — id блока, который нужно показать
-   */
+const AlgorithmUI = {  // переключение между интерфейсами
   switchAlgorithm(id) {  // у всех элементов .algorithm-interface убираем css-класс show, 
                          // а потом добавляем show к блоку, чей id передается (чтобы при нажатии на алгоритм
                          // отображался только нужный раздел, а остальные были скрыты)
@@ -34,96 +27,98 @@ class AStar {  // А* (построение пути на сетке)
                         // считывает размер введенной сетки, чистит прошлую
                         // создает новую
     this.findBtn = document.getElementById('findPathButton');
+                        // при клике запускает findPath(A*)
+                        // он перебирает маршруты и красит его
     this.gridContainer = document.getElementById('gridDisplay');
+                        // внутри него находятся все ячейки 
+                        // в него добавляется grid-Cell, квадратики сетки становятся видимыми
 
-    // Внутренние данные:
-    this.grid  = [];  // массив объектов {r, c, type, elem}
+    this.grid  = [];  // внутренние данные с координатами и текущим состоянием (номер строки,
+                      // номер столбца, текущее состояние, elem - ссылка на объект в this-grid,
+                      // который был отмечен стартом/финишем)
     this.start = null;
     this.end   = null;
 
-    // Привязка событий
     this.generateBtn.addEventListener('click', () => this.createGrid());
+                      // привязка событий (при клике на createGrid() - строим)
     this.findBtn.addEventListener('click', ()  => this.findPath());
+                      // при клике на findPath() - находим путь
   }
-
-  /**
-   * Создание сетки N×N:
-   * - очищаем контейнер,
-   * - создаем div.grid-cell для каждой ячейки,
-   * - добавляем в this.grid объект ячейки.
-   */
+  
   createGrid() {
-    const N = +this.sizeInput.value;
-    if (isNaN(N) || N < 3) {
-      alert('Введите размер N ≥ 3');
+                // логика: делаем сетку N на N
+                // чистим контейнер
+                // делаем div.grid-cell для каждой ячейки
+                // кидаем в this.grid объект ячейки
+    const N = +this.sizeInput.value;  // строку из ввода в переводим в число
+    if (isNaN(N) || N < 3) {  // чтобы сетка вообще имела смысл
+      alert('введите размер N ≥ 3');
       return;
     }
-    // Сброс
+    
     this.grid  = [];
+              // убираем старые данные 
     this.start = this.end = null;
+              // отмеченные точки сбрасываем
     this.gridContainer.innerHTML = '';
-    // Задаем CSS grid-колонки
-    this.gridContainer.style.gridTemplateColumns = `repeat(${N}, 40px)`;
+              // старые div'ы из контейнера удаляем 
+    this.gridContainer.style.gridTemplateColumns = `repeat(${N}, 40px)`; 
+              // делаем css-grid колонки (делаем N колонок, каждая 40 пикселей по ширине)
 
-    // Создаем N×N ячеек
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
+                  // делаем N на N ячеек
         const cellElem = document.createElement('div');
+                  // делаем новый div, класс для него grid-cell
         cellElem.className = 'grid-cell';
-        // Клик для выбора старта/финиша/препятствия
         cellElem.addEventListener('click', () => this.onCellClick(r, c, cellElem));
+                  // привязываем к этому div'у метод onCellClick(r, c, elem)
         this.gridContainer.appendChild(cellElem);
+                  // кидаем элемент в контейнер, чтобы он появлился в dom'е
         this.grid.push({ r, c, type: 'empty', elem: cellElem });
+                  // инфо про ячейку сохраняем
       }
     }
   }
 
-  /**
-   * Обработка клика по ячейке:
-   * - первая кликнутая — старт (зеленый),
-   * - вторая — финиш (красный),
-   * - последующие переключают empty ↔ obstacle (светло-серый ↔ тёмно-синий).
-   */
   onCellClick(r, c, elem) {
+                  // логика: первый клик - зеленая кнопка
+                  // второй клик - красная кнопка
+                  // клики дальше - свич между empty и obstacle (смена цвета)
     const cell = this.grid.find(x => x.r === r && x.c === c);
-    if (!this.start) {
+                  // находим объект ячейки по координатам (в this.grid)
+    if (!this.start) { // если старт не задан, задаем это стартом
       cell.type = 'start';
       this.start = cell;
-      elem.style.background = '#2ecc71';
+      elem.style.background = '#2ecc71';  // красим в зеленый
     }
-    else if (!this.end && cell.type === 'empty') {
+    else if (!this.end && cell.type === 'empty') {  // если финиш не задан, задаем финишом это
       cell.type = 'end';
       this.end = cell;
-      elem.style.background = '#e74c3c';
+      elem.style.background = '#e74c3c';  // красим в красный
     }
-    else if (cell.type === 'empty') {
+    else if (cell.type === 'empty') {  // когда пустая клетка, делаем ее препятствием
       cell.type = 'obstacle';
-      elem.style.background = '#2c3e50';
+      elem.style.background = '#2c3e50';  // красим в синий
     }
-    else if (cell.type === 'obstacle') {
+    else if (cell.type === 'obstacle') {  // когда препятствиие - делаем свободной
       cell.type = 'empty';
-      elem.style.background = 'lightgray';
+      elem.style.background = 'lightgray';  // красим в цвет пустой клетки  
     }
   }
 
-  /**
-   * Манхэттенская эвристика для A*:
-   * расстояние по клеткам по прямым осям.
-   */
-  heuristic(a, b) {
+  heuristic(a, b) {  // эвристика (оно же расстояние по клеткам по прямым осям)
     return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
+                    // возвращает сумму алсолютных разниц по строкам и столбцам (r и c)
+                    // юзается в A* для оценки кол-во оставшихся клеток до нужной клетки 
   }
 
-  /**
-   * Запуск алгоритма A*:
-   * - используем open-сет (массив),
-   * - карты gScore и fScore,
-   * - пока open не пуст, выбираем узел с минимальным f,
-   * - просматриваем соседей (вверх/вниз/влево/вправо),
-   * - обновляем оценки и записи cameFrom,
-   * - при достижении финиша вызываем reconstruct().
-   */
   findPath() {
+            // логика: юзаем open-сет (массив), карты gscore и fscore
+            // пока open не пуст, выбираем узел с минимальным f
+            // смотрим соседей (снизу/сверху/слева/справа)
+            // обновляем оценки и записи в cameFrom
+            // дошли до финиша - вызываем reconstruct
     if (!this.start || !this.end) {
       alert('Установите старт и финиш');
       return;
