@@ -364,9 +364,8 @@ class GeneticTSP {
     }
 
     const populationSize = 100;   //сколько маршрутов в популяции
-    const generations     = 200;  //число поколений
+    const generations = 200;  //число поколений
 
-    //Инициализация: генерируем популяцию случайных перестановок [0..n-1]
     let population = [];
     for (let i = 0; i < populationSize; i++) {
       population.push(this._shuffle(Array.from({ length: n }, (_, i) => i)));
@@ -376,25 +375,20 @@ class GeneticTSP {
 
     //Эволюция
     for (let gen = 0; gen < generations; gen++) {
-      //Оценка: вычисляем длину маршрута для каждого индивида
       const scored = population.map(route => ({
         route,
         distance: this._computeRouteLength(route)
       }))
-      //Сортировка по возрастанию длины
       .sort((a, b) => a.distance - b.distance);
 
-      //Сохраняем лучший маршрут, замыкаем цикл
       if (scored[0].distance < bestDistance) {
         bestDistance = scored[0].distance;
         this.bestRoute = [...scored[0].route, scored[0].route[0]];
       }
 
-      //Отбор топ-20% для нового поколения
       const retainCount = Math.floor(populationSize * 0.2);
       let newPop = scored.slice(0, retainCount).map(o => o.route);
 
-      //Кроссовер + мутация для заполнения до populationSize
       while (newPop.length < populationSize) {
         const parentA = this._tournamentSelect(scored);
         const parentB = this._tournamentSelect(scored);
