@@ -1,169 +1,167 @@
-///////////////////////////////////////
-// UI: переключение между интерфейсами
-///////////////////////////////////////
-const AlgorithmUI = {
-  /**
-   * Скрываем все панели .algorithm-interface и показываем только одну
-   * @param {string} id — id блока, который нужно показать
-   */
-  switchAlgorithm(id) {
+const AlgorithmUI = {  // переключение между интерфейсами
+  switchAlgorithm(id) {  // у всех элементов .algorithm-interface убираем css-класс show, 
+                         // а потом добавляем show к блоку, чей id передается (чтобы при нажатии на алгоритм
+                         // отображался только нужный раздел, а остальные были скрыты)
     document.querySelectorAll('.algorithm-interface').forEach(el => el.classList.remove('show'));
     const panel = document.getElementById(id);
     if (panel) panel.classList.add('show');
   }
 };
-// Навешиваем обработчик на все кнопки .algo-btn
-document.querySelectorAll('.algo-btn').forEach(btn =>
+
+document.querySelectorAll('.algo-btn').forEach(btn =>  // добавляем обработчик на все кнопки algo-btn
+                                                       // на каждую кнопку algo-btn вешаем обработчик клика
+                                                       // он вызывает switchAlgorithm, передает значение data-algo
+                                                       // (чтобы кнопки отображали нужные панели)
   btn.addEventListener('click', () => AlgorithmUI.switchAlgorithm(btn.dataset.algo))
 );
 
 
-//////////////////////////////////
-// Алгоритм A* — поиск кратчайшего пути на сетке
-//////////////////////////////////
-class AStar {
+class AStar {  // А* (построение пути на сетке)
   constructor() {
-    // DOM-элементы:
-    this.sizeInput     = document.getElementById('gridSizeInput');
-    this.generateBtn   = document.getElementById('generateGridButton');
-    this.findBtn       = document.getElementById('findPathButton');
+    // dom-элементы (узлы html, через них читать/менять свойства/атрибуты)
+    this.sizeInput = document.getElementById('gridSizeInput');  
+                        // сейвит ссылки на поля ввода/кнопки в свойства объекта 
+                        // (чтобы дальше с ними работать)
+    this.generateBtn = document.getElementById('generateGridButton');
+                        // при клике вызывает createGrid
+                        // считывает размер введенной сетки, чистит прошлую
+                        // создает новую
+    this.findBtn = document.getElementById('findPathButton');
+                        // при клике запускает findPath(A*)
+                        // он перебирает маршруты и красит его
     this.gridContainer = document.getElementById('gridDisplay');
+                        // внутри него находятся все ячейки 
+                        // в него добавляется grid-Cell, квадратики сетки становятся видимыми
 
-    // Внутренние данные:
-    this.grid  = [];  // массив объектов {r, c, type, elem}
+    this.grid  = [];  // внутренние данные с координатами и текущим состоянием (номер строки,
+                      // номер столбца, текущее состояние, elem - ссылка на объект в this-grid,
+                      // который был отмечен стартом/финишем)
     this.start = null;
     this.end   = null;
 
-    // Привязка событий
     this.generateBtn.addEventListener('click', () => this.createGrid());
+                      // привязка событий (при клике на createGrid() - строим)
     this.findBtn.addEventListener('click', ()  => this.findPath());
+                      // при клике на findPath() - находим путь
   }
-
-  /**
-   * Создание сетки N×N:
-   * - очищаем контейнер,
-   * - создаем div.grid-cell для каждой ячейки,
-   * - добавляем в this.grid объект ячейки.
-   */
+  
   createGrid() {
-    const N = +this.sizeInput.value;
-    if (isNaN(N) || N < 3) {
-      alert('Введите размер N ≥ 3');
+                // логика: делаем сетку N на N
+                // чистим контейнер
+                // делаем div.grid-cell для каждой ячейки
+                // кидаем в this.grid объект ячейки
+    const N = +this.sizeInput.value;  // строку из ввода в переводим в число
+    if (isNaN(N) || N < 3) {  // чтобы сетка вообще имела смысл
+      alert('введите размер N ≥ 3');
       return;
     }
-    // Сброс
+    
     this.grid  = [];
+              // убираем старые данные 
     this.start = this.end = null;
+              // отмеченные точки сбрасываем
     this.gridContainer.innerHTML = '';
-    // Задаем CSS grid-колонки
-    this.gridContainer.style.gridTemplateColumns = `repeat(${N}, 40px)`;
+              // старые div'ы из контейнера удаляем 
+    this.gridContainer.style.gridTemplateColumns = repeat(${N}, 40px); 
+              // делаем css-grid колонки (делаем N колонок, каждая 40 пикселей по ширине)
 
-    // Создаем N×N ячеек
     for (let r = 0; r < N; r++) {
       for (let c = 0; c < N; c++) {
+                  // делаем N на N ячеек
         const cellElem = document.createElement('div');
+                  // делаем новый div, класс для него grid-cell
         cellElem.className = 'grid-cell';
-        // Клик для выбора старта/финиша/препятствия
         cellElem.addEventListener('click', () => this.onCellClick(r, c, cellElem));
+                  // привязываем к этому div'у метод onCellClick(r, c, elem)
         this.gridContainer.appendChild(cellElem);
+                  // кидаем элемент в контейнер, чтобы он появлился в dom'е
         this.grid.push({ r, c, type: 'empty', elem: cellElem });
+                  // инфо про ячейку сохраняем
       }
     }
   }
 
-  /**
-   * Обработка клика по ячейке:
-   * - первая кликнутая — старт (зеленый),
-   * - вторая — финиш (красный),
-   * - последующие переключают empty ↔ obstacle (светло-серый ↔ тёмно-синий).
-   */
   onCellClick(r, c, elem) {
+                  // логика: первый клик - зеленая кнопка
+                  // второй клик - красная кнопка
+                  // клики дальше - свич между empty и obstacle (смена цвета)
     const cell = this.grid.find(x => x.r === r && x.c === c);
-    if (!this.start) {
+                  // находим объект ячейки по координатам (в this.grid)
+    if (!this.start) { // если старт не задан, задаем это стартом
       cell.type = 'start';
       this.start = cell;
-      elem.style.background = '#2ecc71';
+      elem.style.background = '#2ecc71';  // красим в зеленый
     }
-    else if (!this.end && cell.type === 'empty') {
+    else if (!this.end && cell.type === 'empty') {  // если финиш не задан, задаем финишом это
       cell.type = 'end';
       this.end = cell;
-      elem.style.background = '#e74c3c';
+      elem.style.background = '#e74c3c';  // красим в красный
     }
-    else if (cell.type === 'empty') {
+    else if (cell.type === 'empty') {  // когда пустая клетка, делаем ее препятствием
       cell.type = 'obstacle';
-      elem.style.background = '#2c3e50';
+      elem.style.background = '#2c3e50';  // красим в синий
     }
-    else if (cell.type === 'obstacle') {
+    else if (cell.type === 'obstacle') {  // когда препятствиие - делаем свободной
       cell.type = 'empty';
-      elem.style.background = 'lightgray';
+      elem.style.background = 'lightgray';  // красим в цвет пустой клетки  
     }
   }
 
-  /**
-   * Манхэттенская эвристика для A*:
-   * расстояние по клеткам по прямым осям.
-   */
-  heuristic(a, b) {
+  heuristic(a, b) {  // эвристика (оно же расстояние по клеткам по прямым осям)
     return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
+                    // возвращает сумму алсолютных разниц по строкам и столбцам (r и c)
+                    // юзается в A* для оценки кол-во оставшихся клеток до нужной клетки 
   }
 
-  /**
-   * Запуск алгоритма A*:
-   * - используем open-сет (массив),
-   * - карты gScore и fScore,
-   * - пока open не пуст, выбираем узел с минимальным f,
-   * - просматриваем соседей (вверх/вниз/влево/вправо),
-   * - обновляем оценки и записи cameFrom,
-   * - при достижении финиша вызываем reconstruct().
-   */
   findPath() {
+            // логика: юзаем open-сет (массив), карты gscore и fscore
+            // пока open не пуст, выбираем узел с минимальным f
+            // смотрим соседей (снизу/сверху/слева/справа)
+            // обновляем оценки и записи в cameFrom
+            // дошли до финиша - вызываем reconstruct
     if (!this.start || !this.end) {
       alert('Установите старт и финиш');
       return;
     }
 
-    const open     = [this.start];
-    const cameFrom = new Map();
-    const gScore   = new Map();
-    const fScore   = new Map();
+    const open = [this.start];  // список клеток, которые надо проверить
+    const cameFrom = new Map();  // map, чтобы путь восстанавливать 
+    const gScore = new Map();  // бесконечный, кроме стартовой (там ноль)
+    const fScore = new Map();  // gScore + эвристика
 
-    // Инициализация оценок
-    this.grid.forEach(cell => {
+    this.grid.forEach(cell => {  // оценки
       gScore.set(cell, Infinity);
       fScore.set(cell, Infinity);
     });
     gScore.set(this.start, 0);
     fScore.set(this.start, this.heuristic(this.start, this.end));
 
-    // Главный цикл
-    while (open.length > 0) {
-      // Выбор узла с минимальным fScore
-      const current = open.reduce((a, b) => (
+    while (open.length > 0) {  // главный цикл (пока open не пуст)
+      const current = open.reduce((a, b) => (  // current - узел с минимальным fScore
         fScore.get(a) < fScore.get(b) ? a : b
       ));
 
-      // Если дошли до финиша — восстанавливаем путь
-      if (current === this.end) {
+      if (current === this.end) {  // если дошли до цели, восстанавливаем путь 
         this.reconstruct(cameFrom, current);
         return;
       }
 
-      // Удаляем current из open
-      open.splice(open.indexOf(current), 1);
+      open.splice(open.indexOf(current), 1);  // current удаляем из open
 
-      // Обрабатываем всех 4 соседей
       [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr, dc]) => {
+                      // для каждого направления (вверх/вниз... считаем соседнюю клетку)
         const nr = current.r + dr;
         const nc = current.c + dc;
         const neighbor = this.grid.find(x => x.r === nr && x.c === nc);
         if (!neighbor || neighbor.type === 'obstacle') return;
-
+                      // если есть сосед, и он не препятствие
         const tentativeG = gScore.get(current) + 1;
-        if (tentativeG < gScore.get(neighbor)) {
-          cameFrom.set(neighbor, current);
+        if (tentativeG < gScore.get(neighbor)) {  // если этот лучше старого gScore
+          cameFrom.set(neighbor, current);  // обновляем соседа
           gScore.set(neighbor, tentativeG);
           fScore.set(neighbor, tentativeG + this.heuristic(neighbor, this.end));
-          if (!open.includes(neighbor)) open.push(neighbor);
+          if (!open.includes(neighbor)) open.push(neighbor); 
+                      // если neighbor не в open'e, добавляем его туда
         }
       });
     }
@@ -171,33 +169,31 @@ class AStar {
     alert('Путь не найден');
   }
 
-  /**
-   * Восстановление пути по карте cameFrom:
-   * - идем от финиша к старту, окрашиваем ячейки;
-   * - старт и финиш оставляем зелёным/красным.
-   */
-  reconstruct(cameFrom, current) {
-    while (cameFrom.has(current)) {
+  reconstruct(cameFrom, current) {  // восстановление пути
+                  // логика: идем от старта к финишу, цвета старта и финиша не меняем
+    while (cameFrom.has(current)) {  // с конечной проходим 
       if (current !== this.end) {
-        current.elem.style.background = '#f1c40f'; // желтый цвет пути
+        current.elem.style.background = '#f1c40f'; // путь в желтый
       }
-      current = cameFrom.get(current);
+      current = cameFrom.get(current);  // когда цикл прошли, current равен старту
     }
   }
 }
 
-
-//////////////////////////////////
-// Генетический алгоритм (TSP)
-//////////////////////////////////
-class GeneticTSP {
+class GeneticTSP {  // генетика
+              // логика: инициализируем популяцию случайных маршрутов
+              // для каждого поколения считаем длину маршрута
+              // сортируем по лучшей длине
+              // сохраняем лучший 
+              // отбираем 20%
+              // кроссовер и мутация для заполнения популяции 
+              // рисуем лучший маршрут и выводим длину
   constructor() {
-    // DOM-элементы:
-    this.canvas    = document.getElementById('geneticCanvas');
-    this.ctx       = this.canvas.getContext('2d');
-    this.runBtn    = document.getElementById('runGeneticBtn');
-    this.resetBtn  = document.getElementById('resetGeneticBtn');
-    this.outputEl  = document.getElementById('bestDistanceDisplay');
+    this.canvas = document.getElementById('geneticCanvas'); // dom-элементы
+    this.ctx = this.canvas.getContext('2d');
+    this.runBtn = document.getElementById('runGeneticBtn');
+    this.resetBtn = document.getElementById('resetGeneticBtn');
+    this.outputEl = document.getElementById('bestDistanceDisplay');
 
     // Данные:
     this.cities    = [];    // [{x, y}, ...]
@@ -319,7 +315,7 @@ class GeneticTSP {
     }
 
     // Выводим длину
-    this.outputEl.textContent = `Лучшая длина маршрута: ${bestDistance.toFixed(2)}`;
+    this.outputEl.textContent = Лучшая длина маршрута: ${bestDistance.toFixed(2)};
   }
 
   /** Fisher–Yates shuffle */
@@ -532,7 +528,7 @@ class AntColony {
       this.ctx.stroke();
     }
 
-    alert(`Лучший маршрут ACO длина: ${this.bestLen.toFixed(2)}`);
+    alert(Лучший маршрут ACO длина: ${this.bestLen.toFixed(2)});
   }
 
   /**
