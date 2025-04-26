@@ -416,11 +416,9 @@ class GeneticTSP {
       this.ctx.stroke();
     }
 
-    // Выводим длину
     this.outputEl.textContent = `Лучшая длина маршрута: ${bestDistance.toFixed(2)}`;
   }
 
-  /** Fisher–Yates shuffle */
   _shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -429,7 +427,6 @@ class GeneticTSP {
     return array;
   }
 
-  /** Турнирный отбор из топ-20% */
   _tournamentSelect(scored) {
     const cutoff = Math.floor(scored.length * 0.2);
     const idx = Math.floor(Math.random() * cutoff);
@@ -446,7 +443,6 @@ class GeneticTSP {
     return [...segment, ...b.filter(x => !segment.includes(x))];
   }
 
-  /** Мутация: меняем местами две случайные точки */
   _mutate(route) {
     const i = Math.floor(Math.random() * route.length);
     const j = Math.floor(Math.random() * route.length);
