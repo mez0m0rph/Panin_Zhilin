@@ -188,6 +188,171 @@ class AStar {
 
 
 //////////////////////////////////
+// K-Means кластеризация
+//////////////////////////////////
+class KMeans {
+  constructor() {
+    // DOM-элементы
+    this.canvas = document.getElementById('kmeansCanvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.pointCountInput = document.getElementById('kmeansPointCount');
+    this.kInput = document.getElementById('kmeansK');
+    this.generateBtn = document.getElementById('kmeansGenerateBtn');
+    this.runBtn = document.getElementById('kmeansRunBtn');
+
+    // Данные
+    this.points = [];
+    this.centroids = [];
+    this.clusters = [];
+
+    // Привязка событий
+    this.generateBtn.addEventListener('click', () => this.generatePoints());
+    this.runBtn.addEventListener('click', () => this.runKMeans());
+  }
+
+  /**
+   * Генерация случайных точек на холсте
+   */
+  generatePoints() {
+    const count = +this.pointCountInput.value;
+    this.points = Array.from({ length: count }, () => ({
+      x: Math.random() * this.canvas.width,
+      y: Math.random() * this.canvas.height,
+      cluster: -1
+    }));
+    this.drawPoints();
+  }
+
+  /**
+   * Отрисовка всех точек (пока без кластеров)
+   */
+  drawPoints() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.points.forEach(p => {
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+      this.ctx.fillStyle = '#3498db';
+      this.ctx.fill();
+    });
+  }
+
+  /**
+   * Запуск алгоритма K-Means:
+   * 1. Инициализация центроидов случайными точками
+   * 2. Кластеризация:
+   *    a) Назначение точек ближайшим центроидам
+   *    b) Пересчет позиций центроидов
+   *    c) Повтор пока центроиды не стабилизируются
+   * 3. Отрисовка результатов
+   */
+  runKMeans() {
+    const k = +this.kInput.value;
+    if (k < 1 || k > 10) {
+      alert('Выберите K от 1 до 10');
+      return;
+    }
+    if (this.points.length === 0) {
+      alert('Сгенерируйте точки сначала');
+      return;
+    }
+
+    // 1. Инициализация центроидов - выбираем k случайных точек
+    this.centroids = [];
+    const shuffled = [...this.points].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < k; i++) {
+      this.centroids.push({
+        x: shuffled[i].x,
+        y: shuffled[i].y,
+        color: this.getRandomColor()
+      });
+    }
+
+    let changed;
+    // 2. Основной цикл алгоритма
+    do {
+      changed = false;
+      
+      // a) Назначение точек кластерам
+      this.points.forEach(p => {
+        let minDist = Infinity;
+        let newCluster = -1;
+        
+        // Находим ближайший центроид
+        this.centroids.forEach((c, i) => {
+          const dist = this.distance(p, c);
+          if (dist < minDist) {
+            minDist = dist;
+            newCluster = i;
+          }
+        });
+        
+        // Если кластер изменился
+        if (p.cluster !== newCluster) {
+          p.cluster = newCluster;
+          changed = true;
+        }
+      });
+      
+      // b) Пересчет центроидов
+      this.centroids.forEach((centroid, i) => {
+        const clusterPoints = this.points.filter(p => p.cluster === i);
+        if (clusterPoints.length > 0) {
+          const sumX = clusterPoints.reduce((sum, p) => sum + p.x, 0);
+          const sumY = clusterPoints.reduce((sum, p) => sum + p.y, 0);
+          centroid.x = sumX / clusterPoints.length;
+          centroid.y = sumY / clusterPoints.length;
+        }
+      });
+    } while (changed); // c) Повторяем пока кластеры меняются
+
+    // 3. Отрисовка результатов
+    this.drawClusters();
+  }
+
+  /**
+   * Отрисовка кластеров разными цветами и центроидов
+   */
+  drawClusters() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
+    // Рисуем точки цветами их кластеров
+    this.points.forEach(p => {
+      this.ctx.beginPath();
+      this.ctx.arc(p.x, p.y, 3, 0, 2 * Math.PI);
+      this.ctx.fillStyle = this.centroids[p.cluster]?.color || '#3498db';
+      this.ctx.fill();
+    });
+    
+    // Рисуем центроиды
+    this.centroids.forEach(c => {
+      this.ctx.beginPath();
+      this.ctx.arc(c.x, c.y, 10, 0, 2 * Math.PI);
+      this.ctx.fillStyle = c.color;
+      this.ctx.fill();
+      this.ctx.strokeStyle = 'white';
+      this.ctx.lineWidth = 2;
+      this.ctx.stroke();
+    });
+  }
+
+  /**
+   * Вычисление евклидова расстояния между двумя точками
+   */
+  distance(a, b) {
+    return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+  }
+
+  /**
+   * Генерация случайного цвета для кластера
+   */
+  getRandomColor() {
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 70%, 50%)`;
+  }
+}
+
+
+//////////////////////////////////
 // Генетический алгоритм (TSP)
 //////////////////////////////////
 class GeneticTSP {
@@ -557,4 +722,7 @@ window.addEventListener('DOMContentLoaded', () => {
   new KMeans();
   new GeneticTSP();
   new AntColony();
+  
+  // Показываем первый интерфейс по умолчанию
+  AlgorithmUI.switchAlgorithm('aStarInterface');
 });
