@@ -135,7 +135,7 @@ class AStar {  // А* (построение пути на сетке)
         return;
       }
 
-      // Удаляем current из open
+      //Удаляем current из open
       open.splice(open.indexOf(current), 1);
 
       // Обрабатываем всех 4 соседей
@@ -171,7 +171,7 @@ class AStar {  // А* (построение пути на сетке)
 
 class KMeans {
   constructor() {
-    // DOM-элементы
+    //DOM-элементы
     this.canvas = document.getElementById('kmeansCanvas');
     this.ctx = this.canvas.getContext('2d');
     this.pointCountInput = document.getElementById('kmeansPointCount');
@@ -179,12 +179,12 @@ class KMeans {
     this.generateBtn = document.getElementById('kmeansGenerateBtn');
     this.runBtn = document.getElementById('kmeansRunBtn');
 
-    // Данные
+    //Данные
     this.points = [];
     this.centroids = [];
     this.clusters = [];
 
-    // Привязка событий
+    //Привязка событий
     this.generateBtn.addEventListener('click', () => this.generatePoints());
     this.runBtn.addEventListener('click', () => this.runKMeans());
   }
@@ -220,7 +220,7 @@ class KMeans {
       return;
     }
 
-    // 1. Инициализация центроидов - выбираем k случайных точек
+    //Инициализация центроидов - выбираем k случайных точек
     this.centroids = [];
     const shuffled = [...this.points].sort(() => Math.random() - 0.5);
     for (let i = 0; i < k; i++) {
@@ -232,11 +232,11 @@ class KMeans {
     }
 
     let changed;
-    // 2. Основной цикл алгоритма
+    // Основной цикл алгоритма
     do {
       changed = false;
       
-      // a) Назначение точек кластерам
+      //Назначение точек кластерам
       this.points.forEach(p => {
         let minDist = Infinity;
         let newCluster = -1;
@@ -257,7 +257,7 @@ class KMeans {
         }
       });
       
-      // b) Пересчет центроидов
+      // Пересчет центроидов
       this.centroids.forEach((centroid, i) => {
         const clusterPoints = this.points.filter(p => p.cluster === i);
         if (clusterPoints.length > 0) {
@@ -267,9 +267,9 @@ class KMeans {
           centroid.y = sumY / clusterPoints.length;
         }
       });
-    } while (changed); // c) Повторяем пока кластеры меняются
+    } while (changed); //Повторяем пока кластеры меняются
 
-    // 3. Отрисовка результатов
+    // Отрисовка результатов
     this.drawClusters();
   }
 
@@ -295,17 +295,11 @@ class KMeans {
       this.ctx.stroke();
     });
   }
-
-  /**
-   * Вычисление евклидова расстояния между двумя точками
-   */
   distance(a, b) {
     return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
   }
 
-  /**
-   * Генерация случайного цвета для кластера
-   */
+  
   getRandomColor() {
     const hue = Math.floor(Math.random() * 360);
     return `hsl(${hue}, 70%, 50%)`;
@@ -316,15 +310,15 @@ class KMeans {
 class GeneticTSP {
   constructor() {
     // DOM-элементы:
-    this.canvas    = document.getElementById('geneticCanvas');
-    this.ctx       = this.canvas.getContext('2d');
-    this.runBtn    = document.getElementById('runGeneticBtn');
-    this.resetBtn  = document.getElementById('resetGeneticBtn');
-    this.outputEl  = document.getElementById('bestDistanceDisplay');
+    this.canvas = document.getElementById('geneticCanvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.runBtn = document.getElementById('runGeneticBtn');
+    this.resetBtn = document.getElementById('resetGeneticBtn');
+    this.outputEl = document.getElementById('bestDistanceDisplay');
 
     // Данные:
-    this.cities    = [];    // [{x, y}, ...]
-    this.bestRoute = null;  // [idx0, idx1, ..., idx0]
+    this.cities = [];
+    this.bestRoute = null;
 
     // События:
     // Клик по холсту — добавление города
@@ -342,7 +336,7 @@ class GeneticTSP {
     this.drawCities();
   }
 
-  /** Отрисовка всех городов (синие точки) */
+  // Отрисовка всех городов (синие точки)
   drawCities() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.cities.forEach(c => {
@@ -353,7 +347,7 @@ class GeneticTSP {
     });
   }
 
-  /** Полный сброс данных и UI */
+  //Полный сброс данных и UI
   reset() {
     this.cities = [];
     this.bestRoute = null;
@@ -369,10 +363,10 @@ class GeneticTSP {
       return;
     }
 
-    const populationSize = 100;   // сколько маршрутов в популяции
-    const generations     = 200;  // число поколений
+    const populationSize = 100;   //сколько маршрутов в популяции
+    const generations     = 200;  //число поколений
 
-    // 1) Инициализация: генерируем популяцию случайных перестановок [0..n-1]
+    //Инициализация: генерируем популяцию случайных перестановок [0..n-1]
     let population = [];
     for (let i = 0; i < populationSize; i++) {
       population.push(this._shuffle(Array.from({ length: n }, (_, i) => i)));
@@ -380,27 +374,27 @@ class GeneticTSP {
 
     let bestDistance = Infinity;
 
-    // 2) Эволюция
+    //Эволюция
     for (let gen = 0; gen < generations; gen++) {
-      // a) Оценка: вычисляем длину маршрута для каждого индивида
+      //Оценка: вычисляем длину маршрута для каждого индивида
       const scored = population.map(route => ({
         route,
         distance: this._computeRouteLength(route)
       }))
-      // b) Сортировка по возрастанию длины
+      //Сортировка по возрастанию длины
       .sort((a, b) => a.distance - b.distance);
 
-      // c) Сохраняем лучший маршрут, замыкаем цикл
+      //Сохраняем лучший маршрут, замыкаем цикл
       if (scored[0].distance < bestDistance) {
         bestDistance = scored[0].distance;
         this.bestRoute = [...scored[0].route, scored[0].route[0]];
       }
 
-      // d) Отбор топ-20% для нового поколения
+      //Отбор топ-20% для нового поколения
       const retainCount = Math.floor(populationSize * 0.2);
       let newPop = scored.slice(0, retainCount).map(o => o.route);
 
-      // e) Кроссовер + мутация для заполнения до populationSize
+      //Кроссовер + мутация для заполнения до populationSize
       while (newPop.length < populationSize) {
         const parentA = this._tournamentSelect(scored);
         const parentB = this._tournamentSelect(scored);
@@ -413,7 +407,7 @@ class GeneticTSP {
       population = newPop;
     }
 
-    // 3) Отрисовываем результат: сначала точки, затем линию цикла
+    //Отрисовываем результат: сначала точки, затем линию цикла
     this.drawCities();
     if (this.bestRoute) {
       this.ctx.beginPath();
