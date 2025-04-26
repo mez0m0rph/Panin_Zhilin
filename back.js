@@ -62,7 +62,7 @@ class AStar {  // А* (построение пути на сетке)
               // отмеченные точки сбрасываем
     this.gridContainer.innerHTML = '';
               // старые div'ы из контейнера удаляем 
-    this.gridContainer.style.gridTemplateColumns = repeat(${N}, 40px); 
+    this.gridContainer.style.gridTemplateColumns = `repeat(${N}, 40px)`; 
               // делаем css-grid колонки (делаем N колонок, каждая 40 пикселей по ширине)
 
     for (let r = 0; r < N; r++) {
@@ -179,6 +179,80 @@ class AStar {  // А* (построение пути на сетке)
     }
   }
 }
+
+class KMeans {  // K-Means (генерация и кластеризация точек)
+  constructor() {
+    this.canvas    = document.getElementById('kmeansCanvas');
+    this.ctx       = this.canvas.getContext('2d');
+    this.pCount    = document.getElementById('kmeansPointCount');
+    this.kInput    = document.getElementById('kmeansK');
+    this.genBtn    = document.getElementById('kmeansGenerateBtn');
+    this.runBtn    = document.getElementById('kmeansRunBtn');
+    this.points    = [];
+    this.centroids = [];
+
+    this.genBtn.addEventListener('click', () => this.genPoints());
+    this.runBtn.addEventListener('click', () => this.cluster());
+  }
+
+  genPoints() {  // генерация случайных точек
+    const n = +this.pCount.value;
+    this.points = Array.from({ length: n }, () => [
+      Math.random() * this.canvas.width,
+      Math.random() * this.canvas.height
+    ]);
+    this.draw();
+  }
+
+  draw() {  // отрисовка точек (черные квадратики)
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.points.forEach(p => {
+      this.ctx.fillStyle = '#000';
+      this.ctx.fillRect(p[0]-3, p[1]-3, 6, 6);
+    });
+  }
+
+  cluster() {  // сама кластеризация
+    const k = +this.kInput.value;
+    if (k < 1 || k > this.points.length) return;
+    this.centroids = this.points.slice(0, k);
+    let changed = true;
+    let assignments = [];
+
+    while (changed) {
+      changed = false;
+      // назначаем каждому ближайший центроид
+      assignments = this.points.map(p => {
+        const ds = this.centroids.map(c => Math.hypot(p[0]-c[0], p[1]-c[1]));
+        return ds.indexOf(Math.min(...ds));
+      });
+      // пересчитываем центроиды
+      for (let i = 0; i < k; i++) {
+        const cluster = this.points.filter((_, idx) => assignments[idx] === i);
+        const meanX = cluster.reduce((s,p) => s+p[0],0)/cluster.length;
+        const meanY = cluster.reduce((s,p) => s+p[1],0)/cluster.length;
+        if (meanX !== this.centroids[i][0] || meanY !== this.centroids[i][1]) {
+          changed = true;
+          this.centroids[i] = [ meanX, meanY ];
+        }
+      }
+    }
+
+    // отображаем
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.points.forEach((p, idx) => {
+      this.ctx.fillStyle = `hsl(${assignments[idx]*360/k},70%,50%)`;
+      this.ctx.fillRect(p[0]-3, p[1]-3, 6, 6);
+    });
+    this.centroids.forEach(c => {
+      this.ctx.beginPath();
+      this.ctx.arc(c[0], c[1], 8, 0, 2*Math.PI);
+      this.ctx.strokeStyle = '#000';
+      this.ctx.stroke();
+    });
+  }
+}
+
 
 class GeneticTSP {  // генетика
               // логика: инициализируем популяцию случайных маршрутов
