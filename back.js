@@ -45,66 +45,68 @@ const AlgorithmUI = {  // переключение между интерфейс
                       // при клике на findPath() - находим путь
   }
   
-    /**
-     * Создание сетки N×N:
-     * - очищаем контейнер,
-     * - создаем div.grid-cell для каждой ячейки,
-     * - добавляем в this.grid объект ячейки.
-     */
-    createGrid() {
-      const N = +this.sizeInput.value;
-      if (isNaN(N) || N < 3) {
-        alert('Введите размер N ≥ 3');
-        return;
-      }
-      // Сброс
-      this.grid  = [];
-      this.start = this.end = null;
-      this.gridContainer.innerHTML = '';
-      // Задаем CSS grid-колонки
-      this.gridContainer.style.gridTemplateColumns = `repeat(${N}, 40px)`;
-  
-      // Создаем N×N ячеек
-      for (let r = 0; r < N; r++) {
-        for (let c = 0; c < N; c++) {
-          const cellElem = document.createElement('div');
-          cellElem.className = 'grid-cell';
-          // Клик для выбора старта/финиша/препятствия
-          cellElem.addEventListener('click', () => this.onCellClick(r, c, cellElem));
-          this.gridContainer.appendChild(cellElem);
-          this.grid.push({ r, c, type: 'empty', elem: cellElem });
-        }
+  createGrid() {
+                // логика: делаем сетку N на N
+                // чистим контейнер
+                // делаем div.grid-cell для каждой ячейки
+                // кидаем в this.grid объект ячейки
+    const N = +this.sizeInput.value;  // строку из ввода в переводим в число
+    if (isNaN(N) || N < 3) {  // чтобы сетка вообще имела смысл
+      alert('введите размер N ≥ 3');
+      return;
+    }
+    
+    this.grid  = [];
+              // убираем старые данные 
+    this.start = this.end = null;
+              // отмеченные точки сбрасываем
+    this.gridContainer.innerHTML = '';
+              // старые div'ы из контейнера удаляем 
+    this.gridContainer.style.gridTemplateColumns = repeat(${N}, 40px); 
+              // делаем css-grid колонки (делаем N колонок, каждая 40 пикселей по ширине)
+
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+                  // делаем N на N ячеек
+        const cellElem = document.createElement('div');
+                  // делаем новый div, класс для него grid-cell
+        cellElem.className = 'grid-cell';
+        cellElem.addEventListener('click', () => this.onCellClick(r, c, cellElem));
+                  // привязываем к этому div'у метод onCellClick(r, c, elem)
+        this.gridContainer.appendChild(cellElem);
+                  // кидаем элемент в контейнер, чтобы он появлился в dom'е
+        this.grid.push({ r, c, type: 'empty', elem: cellElem });
+                  // инфо про ячейку сохраняем
       }
     }
+  }
   
-    /**
-     * Обработка клика по ячейке:
-     * - первая кликнутая — старт (зеленый),
-     * - вторая — финиш (красный),
-     * - последующие переключают empty ↔ obstacle (светло-серый ↔ тёмно-синий).
-     */
-    onCellClick(r, c, elem) {
-      const cell = this.grid.find(x => x.r === r && x.c === c);
-      if (!this.start) {
-        cell.type = 'start';
-        this.start = cell;
-        elem.style.background = '#2ecc71';
-      }
-      else if (!this.end && cell.type === 'empty') {
-        cell.type = 'end';
-        this.end = cell;
-        elem.style.background = '#e74c3c';
-      }
-      else if (cell.type === 'empty') {
-        cell.type = 'obstacle';
-        elem.style.background = '#2c3e50';
-      }
-      else if (cell.type === 'obstacle') {
-        cell.type = 'empty';
-        elem.style.background = 'lightgray';
-      }
+   onCellClick(r, c, elem) {
+                  // логика: первый клик - зеленая кнопка
+                  // второй клик - красная кнопка
+                  // клики дальше - свич между empty и obstacle (смена цвета)
+    const cell = this.grid.find(x => x.r === r && x.c === c);
+                  // находим объект ячейки по координатам (в this.grid)
+    if (!this.start) { // если старт не задан, задаем это стартом
+      cell.type = 'start';
+      this.start = cell;
+      elem.style.background = '#2ecc71';  // красим в зеленый
     }
-  
+    else if (!this.end && cell.type === 'empty') {  // если финиш не задан, задаем финишом это
+      cell.type = 'end';
+      this.end = cell;
+      elem.style.background = '#e74c3c';  // красим в красный
+    }
+    else if (cell.type === 'empty') {  // когда пустая клетка, делаем ее препятствием
+      cell.type = 'obstacle';
+      elem.style.background = '#2c3e50';  // красим в синий
+    }
+    else if (cell.type === 'obstacle') {  // когда препятствиие - делаем свободной
+      cell.type = 'empty';
+      elem.style.background = 'lightgray';  // красим в цвет пустой клетки  
+    }
+  }
+
     /**
      * Манхэттенская эвристика для A*:
      * расстояние по клеткам по прямым осям.
