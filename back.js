@@ -124,48 +124,44 @@ class AStar {  // А* (построение пути на сетке)
       return;
     }
 
-    const open     = [this.start];
-    const cameFrom = new Map();
-    const gScore   = new Map();
-    const fScore   = new Map();
+    const open = [this.start];  // список клеток, которые надо проверить
+    const cameFrom = new Map();  // map, чтобы путь восстанавливать 
+    const gScore = new Map();  // бесконечный, кроме стартовой (там ноль)
+    const fScore = new Map();  // gScore + эвристика
 
-    // Инициализация оценок
-    this.grid.forEach(cell => {
+    this.grid.forEach(cell => {  // оценки
       gScore.set(cell, Infinity);
       fScore.set(cell, Infinity);
     });
     gScore.set(this.start, 0);
     fScore.set(this.start, this.heuristic(this.start, this.end));
 
-    // Главный цикл
-    while (open.length > 0) {
-      // Выбор узла с минимальным fScore
-      const current = open.reduce((a, b) => (
+    while (open.length > 0) {  // главный цикл (пока open не пуст)
+      const current = open.reduce((a, b) => (  // current - узел с минимальным fScore
         fScore.get(a) < fScore.get(b) ? a : b
       ));
 
-      // Если дошли до финиша — восстанавливаем путь
-      if (current === this.end) {
+      if (current === this.end) {  // если дошли до цели, восстанавливаем путь 
         this.reconstruct(cameFrom, current);
         return;
       }
 
-      // Удаляем current из open
-      open.splice(open.indexOf(current), 1);
+      open.splice(open.indexOf(current), 1);  // current удаляем из open
 
-      // Обрабатываем всех 4 соседей
       [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr, dc]) => {
+                      // для каждого направления (вверх/вниз... считаем соседнюю клетку)
         const nr = current.r + dr;
         const nc = current.c + dc;
         const neighbor = this.grid.find(x => x.r === nr && x.c === nc);
         if (!neighbor || neighbor.type === 'obstacle') return;
-
+                      // если есть сосед, и он не препятствие
         const tentativeG = gScore.get(current) + 1;
-        if (tentativeG < gScore.get(neighbor)) {
-          cameFrom.set(neighbor, current);
+        if (tentativeG < gScore.get(neighbor)) {  // если этот лучше старого gScore
+          cameFrom.set(neighbor, current);  // обновляем соседа
           gScore.set(neighbor, tentativeG);
           fScore.set(neighbor, tentativeG + this.heuristic(neighbor, this.end));
-          if (!open.includes(neighbor)) open.push(neighbor);
+          if (!open.includes(neighbor)) open.push(neighbor); 
+                      // если neighbor не в open'e, добавляем его туда
         }
       });
     }
@@ -173,17 +169,13 @@ class AStar {  // А* (построение пути на сетке)
     alert('Путь не найден');
   }
 
-  /**
-   * Восстановление пути по карте cameFrom:
-   * - идем от финиша к старту, окрашиваем ячейки;
-   * - старт и финиш оставляем зелёным/красным.
-   */
-  reconstruct(cameFrom, current) {
-    while (cameFrom.has(current)) {
+  reconstruct(cameFrom, current) {  // восстановление пути
+                  // логика: идем от старта к финишу, цвета старта и финиша не меняем
+    while (cameFrom.has(current)) {  // с конечной проходим 
       if (current !== this.end) {
-        current.elem.style.background = '#f1c40f'; // желтый цвет пути
+        current.elem.style.background = '#f1c40f'; // путь в желтый
       }
-      current = cameFrom.get(current);
+      current = cameFrom.get(current);  // когда цикл прошли, current равен старту
     }
   }
 }
