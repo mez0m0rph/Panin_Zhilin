@@ -107,93 +107,79 @@ const AlgorithmUI = {  // переключение между интерфейс
     }
   }
 
-    /**
-     * Манхэттенская эвристика для A*:
-     * расстояние по клеткам по прямым осям.
-     */
-    heuristic(a, b) {
-      return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
-    }
-  
-    /**
-     * Запуск алгоритма A*:
-     * - используем open-сет (массив),
-     * - карты gScore и fScore,
-     * - пока open не пуст, выбираем узел с минимальным f,
-     * - просматриваем соседей (вверх/вниз/влево/вправо),
-     * - обновляем оценки и записи cameFrom,
-     * - при достижении финиша вызываем reconstruct().
-     */
-    findPath() {
-      if (!this.start || !this.end) {
-        alert('Установите старт и финиш');
-        return;
-      }
-  
-      const open     = [this.start];
-      const cameFrom = new Map();
-      const gScore   = new Map();
-      const fScore   = new Map();
-  
-      // Инициализация оценок
-      this.grid.forEach(cell => {
-        gScore.set(cell, Infinity);
-        fScore.set(cell, Infinity);
-      });
-      gScore.set(this.start, 0);
-      fScore.set(this.start, this.heuristic(this.start, this.end));
-  
-      // Главный цикл
-      while (open.length > 0) {
-        // Выбор узла с минимальным fScore
-        const current = open.reduce((a, b) => (
-          fScore.get(a) < fScore.get(b) ? a : b
-        ));
-  
-        // Если дошли до финиша — восстанавливаем путь
-        if (current === this.end) {
-          this.reconstruct(cameFrom, current);
-          return;
-        }
-  
-        // Удаляем current из open
-        open.splice(open.indexOf(current), 1);
-  
-        // Обрабатываем всех 4 соседей
-        [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr, dc]) => {
-          const nr = current.r + dr;
-          const nc = current.c + dc;
-          const neighbor = this.grid.find(x => x.r === nr && x.c === nc);
-          if (!neighbor || neighbor.type === 'obstacle') return;
-  
-          const tentativeG = gScore.get(current) + 1;
-          if (tentativeG < gScore.get(neighbor)) {
-            cameFrom.set(neighbor, current);
-            gScore.set(neighbor, tentativeG);
-            fScore.set(neighbor, tentativeG + this.heuristic(neighbor, this.end));
-            if (!open.includes(neighbor)) open.push(neighbor);
-          }
-        });
-      }
-  
-      alert('Путь не найден');
-    }
-  
-    /**
-     * Восстановление пути по карте cameFrom:
-     * - идем от финиша к старту, окрашиваем ячейки;
-     * - старт и финиш оставляем зелёным/красным.
-     */
-    reconstruct(cameFrom, current) {
-      while (cameFrom.has(current)) {
-        if (current !== this.end) {
-          current.elem.style.background = '#f1c40f'; // желтый цвет пути
-        }
-        current = cameFrom.get(current);
-      }
-    }
+ heuristic(a, b) {  // эвристика (оно же расстояние по клеткам по прямым осям)
+    return Math.abs(a.r - b.r) + Math.abs(a.c - b.c);
+                    // возвращает сумму алсолютных разниц по строкам и столбцам (r и c)
+                    // юзается в A* для оценки кол-во оставшихся клеток до нужной клетки 
   }
   
+ findPath() {
+            // логика: юзаем open-сет (массив), карты gscore и fscore
+            // пока open не пуст, выбираем узел с минимальным f
+            // смотрим соседей (снизу/сверху/слева/справа)
+            // обновляем оценки и записи в cameFrom
+            // дошли до финиша - вызываем reconstruct
+    if (!this.start || !this.end) {
+      alert('Установите старт и финиш');
+      return;
+    }
+
+    const open = [this.start];  // список клеток, которые надо проверить
+    const cameFrom = new Map();  // map, чтобы путь восстанавливать 
+    const gScore = new Map();  // бесконечный, кроме стартовой (там ноль)
+    const fScore = new Map();  // gScore + эвристика
+
+    this.grid.forEach(cell => {  // оценки
+      gScore.set(cell, Infinity);
+      fScore.set(cell, Infinity);
+    });
+    gScore.set(this.start, 0);
+    fScore.set(this.start, this.heuristic(this.start, this.end));
+
+    while (open.length > 0) {  // главный цикл (пока open не пуст)
+      const current = open.reduce((a, b) => (  // current - узел с минимальным fScore
+        fScore.get(a) < fScore.get(b) ? a : b
+      ));
+
+      if (current === this.end) {  // если дошли до цели, восстанавливаем путь 
+        this.reconstruct(cameFrom, current);
+        return;
+      }
+
+      open.splice(open.indexOf(current), 1);  // current удаляем из open
+
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr, dc]) => {
+                      // для каждого направления (вверх/вниз... считаем соседнюю клетку)
+        const nr = current.r + dr;
+        const nc = current.c + dc;
+        const neighbor = this.grid.find(x => x.r === nr && x.c === nc);
+        if (!neighbor || neighbor.type === 'obstacle') return;
+                      // если есть сосед, и он не препятствие
+        const tentativeG = gScore.get(current) + 1;
+        if (tentativeG < gScore.get(neighbor)) {  // если этот лучше старого gScore
+          cameFrom.set(neighbor, current);  // обновляем соседа
+          gScore.set(neighbor, tentativeG);
+          fScore.set(neighbor, tentativeG + this.heuristic(neighbor, this.end));
+          if (!open.includes(neighbor)) open.push(neighbor); 
+                      // если neighbor не в open'e, добавляем его туда
+        }
+      });
+    }
+
+    alert('Путь не найден');
+  }
+
+  
+   reconstruct(cameFrom, current) {  // восстановление пути
+                  // логика: идем от старта к финишу, цвета старта и финиша не меняем
+    while (cameFrom.has(current)) {  // с конечной проходим 
+      if (current !== this.end) {
+        current.elem.style.background = '#f1c40f'; // путь в желтый
+      }
+      current = cameFrom.get(current);  // когда цикл прошли, current равен старту
+    }
+  }
+}
   
   //////////////////////////////////
   // K-Means кластеризация
