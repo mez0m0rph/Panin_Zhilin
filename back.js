@@ -1,3 +1,6 @@
+///////////////////////////////////////
+// UI: переключение между интерфейсами
+///////////////////////////////////////
 const AlgorithmUI = {  // переключение между интерфейсами
   switchAlgorithm(id) {  // у всех элементов .algorithm-interface убираем css-класс show, 
                          // а потом добавляем show к блоку, чей id передается (чтобы при нажатии на алгоритм
@@ -16,6 +19,9 @@ document.querySelectorAll('.algo-btn').forEach(btn =>  // добавляем о�
 );
 
 
+//////////////////////////////////
+// Алгоритм A* — поиск кратчайшего пути на сетке
+//////////////////////////////////
 class AStar {  // А* (построение пути на сетке)
   constructor() {
     // dom-элементы (узлы html, через них читать/менять свойства/атрибуты)
@@ -92,7 +98,7 @@ class AStar {  // А* (построение пути на сетке)
       this.start = cell;
       elem.style.background = '#2ecc71';  // красим в зеленый
     }
-    else if (!this.end && cell.type === 'empty') {  // если финиш не задан, задаем финишом это
+    else if (!this.end && cell.type === 'empty') {  // если финиш не задан, задаем финишем это
       cell.type = 'end';
       this.end = cell;
       elem.style.background = '#e74c3c';  // красим в красный
@@ -180,6 +186,10 @@ class AStar {  // А* (построение пути на сетке)
   }
 }
 
+
+//////////////////////////////////
+// K-Means кластеризация
+//////////////////////////////////
 class KMeans {  // K-Means (генерация и кластеризация точек)
   constructor() {
     this.canvas    = document.getElementById('kmeansCanvas');
@@ -254,6 +264,9 @@ class KMeans {  // K-Means (генерация и кластеризация т�
 }
 
 
+//////////////////////////////////
+// Генетический алгоритм (TSP)
+//////////////////////////////////
 class GeneticTSP {  // генетика
               // логика: инициализируем популяцию случайных маршрутов
               // для каждого поколения считаем длину маршрута
@@ -389,7 +402,7 @@ class GeneticTSP {  // генетика
     }
 
     // Выводим длину
-    this.outputEl.textContent = Лучшая длина маршрута: ${bestDistance.toFixed(2)};
+    this.outputEl.textContent = `Лучшая длина маршрута: ${bestDistance.toFixed(2)}`;
   }
 
   /** Fisher–Yates shuffle */
@@ -448,7 +461,7 @@ class GeneticTSP {  // генетика
 //////////////////////////////////
 // Муравьиный алгоритм (ACO) — TSP
 //////////////////////////////////
-class AntColony {
+class AntColony {  // ACO
   constructor() {
     // DOM-элементы
     this.canvas       = document.getElementById('antCanvas');
@@ -495,14 +508,6 @@ class AntColony {
     });
   }
 
-  /**
-   * Запуск ACO:
-   * - собираем параметры α, β, ρ, число муравьев и итераций,
-   * - строим матрицы расстояний и феромона,
-   * - для каждой итерации моделируем маршруты муравьев,
-   * - испаряем феромон, осаждаем по всем маршрутам,
-   * - сохраняем лучший маршрут и рисуем его.
-   */
   runACO() {
     const n = this.cities.length;
     if (n < 2) return;
@@ -514,44 +519,33 @@ class AntColony {
     const rho        = +this.rhoInput.value;
     const iterations = +this.iterInput.value;
 
-    // Инициализация матриц
+    // Init
     this.distances = Array.from({ length: n }, () => Array(n).fill(0));
     this.pheromone = Array.from({ length: n }, () => Array(n).fill(1));
-
-    // Заполняем матрицу расстояний
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
-        if (i === j) {
-          this.distances[i][j] = Infinity;
-        } else {
-          const dx = this.cities[i].x - this.cities[j].x;
-          const dy = this.cities[i].y - this.cities[j].y;
-          this.distances[i][j] = Math.hypot(dx, dy);
-        }
+        this.distances[i][j] = i === j
+          ? Infinity
+          : Math.hypot(
+              this.cities[i].x - this.cities[j].x,
+              this.cities[i].y - this.cities[j].y
+            );
       }
     }
 
-    // Моделируем заданное число итераций
     this.bestLen = Infinity;
     for (let iter = 0; iter < iterations; iter++) {
       const tours = [];
-
-      // Каждый муравей строит маршрут
       for (let a = 0; a < ants; a++) {
-        const tour = [0];
-        const visited = new Set([0]);
-
+        const tour = [0], visited = new Set([0]);
         while (tour.length < n) {
           const i = tour[tour.length - 1];
-          // Рассчитываем вероятности перехода
           const probs = this.cities.map((_, j) => {
             if (visited.has(j)) return 0;
             return Math.pow(this.pheromone[i][j], alpha) *
                    Math.pow(1 / this.distances[i][j], beta);
           });
           const sum = probs.reduce((s, v) => s + v, 0);
-
-          // Случайный выбор по весам
           let r = Math.random() * sum, next = 0;
           for (let idx = 0; idx < n; idx++) {
             r -= probs[idx];
@@ -560,23 +554,21 @@ class AntColony {
           tour.push(next);
           visited.add(next);
         }
-
         tours.push(tour);
         const len = this._tourLength(tour);
         if (len < this.bestLen) {
           this.bestLen = len;
-          this.bestTour = [...tour, tour[0]]; // замыкаем цикл
+          this.bestTour = [...tour, tour[0]];
         }
       }
 
-      // Испарение феромона
+      // Evaporation
       for (let i = 0; i < n; i++) {
         for (let j = 0; j < n; j++) {
-          this.pheromone[i][j] *= (1 - rho);
+          this.pheromone[i][j] *= 1 - rho;
         }
       }
-
-      // Осаждение феромона по всем маршрутам
+      // Deposition
       tours.forEach(tour => {
         const len = this._tourLength(tour);
         tour.forEach((u, idx) => {
@@ -587,7 +579,7 @@ class AntColony {
       });
     }
 
-    // Отрисовываем лучший маршрут
+    // Draw best
     this.drawCities();
     if (this.bestTour) {
       this.ctx.beginPath();
@@ -602,18 +594,13 @@ class AntColony {
       this.ctx.stroke();
     }
 
-    alert(Лучший маршрут ACO длина: ${this.bestLen.toFixed(2)});
+    alert(`Лучший маршрут ACO длина: ${this.bestLen.toFixed(2)}`);
   }
 
-  /**
-   * Подсчёт длины цикла тура (последний→первый также считается).
-   * @param {number[]} tour — массив индексов городов
-   * @returns {number} длина маршрута
-   */
-  _tourLength(tour) {
+  _tourLength(t) {
     let sum = 0;
-    for (let i = 0; i < tour.length; i++) {
-      const a = tour[i], b = tour[(i + 1) % tour.length];
+    for (let i = 0; i < t.length; i++) {
+      const a = t[i], b = t[(i + 1) % t.length];
       sum += this.distances[a][b];
     }
     return sum;
