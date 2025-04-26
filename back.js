@@ -1,8 +1,4 @@
 const AlgorithmUI = {  // переключение между интерфейсами
-  /**
-   * Скрываем все панели .algorithm-interface и показываем только одну
-   * @param {string} id — id блока, который нужно показать
-   */
   switchAlgorithm(id) {
                           // у всех элементов .algorithm-interface убираем css-класс show, 
                           // а потом добавляем show к блоку, чей id передается (чтобы при нажатии на алгоритм
@@ -107,15 +103,6 @@ class AStar {  // А* (построение пути на сетке)
                     // юзается в A* для оценки кол-во оставшихся клеток до нужной клетки 
   }
 
-  /**
-   * Запуск алгоритма A*:
-   * - используем open-сет (массив),
-   * - карты gScore и fScore,
-   * - пока open не пуст, выбираем узел с минимальным f,
-   * - просматриваем соседей (вверх/вниз/влево/вправо),
-   * - обновляем оценки и записи cameFrom,
-   * - при достижении финиша вызываем reconstruct().
-   */
   findPath() {
     if (!this.start || !this.end) {
       alert('Установите старт и финиш');
@@ -171,11 +158,6 @@ class AStar {  // А* (построение пути на сетке)
     alert('Путь не найден');
   }
 
-  /**
-   * Восстановление пути по карте cameFrom:
-   * - идем от финиша к старту, окрашиваем ячейки;
-   * - старт и финиш оставляем зелёным/красным.
-   */
   reconstruct(cameFrom, current) {
     while (cameFrom.has(current)) {
       if (current !== this.end) {
@@ -187,9 +169,6 @@ class AStar {  // А* (построение пути на сетке)
 }
 
 
-//////////////////////////////////
-// K-Means кластеризация
-//////////////////////////////////
 class KMeans {
   constructor() {
     // DOM-элементы
@@ -210,9 +189,6 @@ class KMeans {
     this.runBtn.addEventListener('click', () => this.runKMeans());
   }
 
-  /**
-   * Генерация случайных точек на холсте
-   */
   generatePoints() {
     const count = +this.pointCountInput.value;
     this.points = Array.from({ length: count }, () => ({
@@ -223,9 +199,6 @@ class KMeans {
     this.drawPoints();
   }
 
-  /**
-   * Отрисовка всех точек (пока без кластеров)
-   */
   drawPoints() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.points.forEach(p => {
@@ -236,15 +209,6 @@ class KMeans {
     });
   }
 
-  /**
-   * Запуск алгоритма K-Means:
-   * 1. Инициализация центроидов случайными точками
-   * 2. Кластеризация:
-   *    a) Назначение точек ближайшим центроидам
-   *    b) Пересчет позиций центроидов
-   *    c) Повтор пока центроиды не стабилизируются
-   * 3. Отрисовка результатов
-   */
   runKMeans() {
     const k = +this.kInput.value;
     if (k < 1 || k > 10) {
@@ -309,9 +273,6 @@ class KMeans {
     this.drawClusters();
   }
 
-  /**
-   * Отрисовка кластеров разными цветами и центроидов
-   */
   drawClusters() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     
@@ -352,9 +313,6 @@ class KMeans {
 }
 
 
-//////////////////////////////////
-// Генетический алгоритм (TSP)
-//////////////////////////////////
 class GeneticTSP {
   constructor() {
     // DOM-элементы:
@@ -375,9 +333,6 @@ class GeneticTSP {
     this.resetBtn.addEventListener('click',() => this.reset());
   }
 
-  /**
-   * Добавление нового города в массив и перерисовка всех городов.
-   */
   addCity(event) {
     const rect = this.canvas.getBoundingClientRect();
     this.cities.push({
@@ -406,17 +361,7 @@ class GeneticTSP {
     this.drawCities();
   }
 
-  /**
-   * Генетический алгоритм:
-   * 1. Инициализация популяции случайных маршрутов.
-   * 2. Для каждого поколения:
-   *    a) Оценка (вычисление длины маршрута).
-   *    b) Сортировка по лучшей длине.
-   *    c) Сохранение лучшего (и замыкание цикла).
-   *    d) Отбор топ-20%.
-   *    e) Кроссовер и мутация для заполнения популяции.
-   * 3. Отрисовка лучшего маршрута и вывод длины.
-   */
+
   runGA() {
     const n = this.cities.length;
     if (n < 2) {
@@ -503,11 +448,7 @@ class GeneticTSP {
     return scored[idx].route;
   }
 
-  /**
-   * Одноточечный кроссовер:
-   * - выбираем случайный отрезок в parentA,
-   * - сохраняем его, затем дополняем генами из parentB в порядке.
-   */
+
   _crossover(a, b) {
     const len = a.length;
     const i = Math.floor(Math.random() * len);
@@ -525,9 +466,6 @@ class GeneticTSP {
     return route;
   }
 
-  /**
-   * Вычисление длины цикла маршрута (последний → первый тоже считается)
-   */
   _computeRouteLength(route) {
     let sum = 0;
     for (let i = 0; i < route.length; i++) {
@@ -539,10 +477,8 @@ class GeneticTSP {
   }
 }
 
+// Муравьиный алгоритм
 
-//////////////////////////////////
-// Муравьиный алгоритм (ACO) — TSP
-//////////////////////////////////
 class AntColony {
   constructor() {
     // DOM-элементы
@@ -590,14 +526,7 @@ class AntColony {
     });
   }
 
-  /**
-   * Запуск ACO:
-   * - собираем параметры α, β, ρ, число муравьев и итераций,
-   * - строим матрицы расстояний и феромона,
-   * - для каждой итерации моделируем маршруты муравьев,
-   * - испаряем феромон, осаждаем по всем маршрутам,
-   * - сохраняем лучший маршрут и рисуем его.
-   */
+ 
   runACO() {
     const n = this.cities.length;
     if (n < 2) return;
@@ -700,11 +629,6 @@ class AntColony {
     alert(`Лучший маршрут ACO длина: ${this.bestLen.toFixed(2)}`);
   }
 
-  /**
-   * Подсчёт длины цикла тура (последний→первый также считается).
-   * @param {number[]} tour — массив индексов городов
-   * @returns {number} длина маршрута
-   */
   _tourLength(tour) {
     let sum = 0;
     for (let i = 0; i < tour.length; i++) {
