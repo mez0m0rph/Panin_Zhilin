@@ -1,0 +1,122 @@
+package com.example.dslengine
+
+class Engine {
+    private val scalars = mutableMapOf<String, Int>()  // хранение скалярных переменных
+    private val buffers = mutableMapOf<String, IntArray>()  // хранение статических массивов
+
+    fun run(program: List<OpCode>) {
+        var ptr = 0  // указатель на текущую инструкцию
+        while (ptr < program.size) {
+            when (val op = program[ptr]) {
+                is OpCode.Decl -> {
+                    if (op.length == null) scalars[op.id] = 0  // объявление скаляра
+                    else buffers[op.id] = IntArray(op.length)  // объявление массива
+                    ptr++
+                }
+                is OpCode.Set -> {
+                    val result = eval(op.expr)
+                    if (op.index == null) scalars[op.id] = result  // присвоение скаляру
+                    else buffers[op.id]?.set(eval(op.index), result)  // присвоение элементу массива
+                    ptr++
+                }
+                is OpCode.CondJump -> {
+                    if (eval(op.cond) != 0) ptr = locate(program, op.mark)  // условный переход
+                    else ptr++
+                }
+                is OpCode.Jump -> ptr = locate(program, op.mark)  // безусловный переход
+                is OpCode.Mark -> ptr++  // метка, просто пропускаем
+            }
+        }
+    }
+
+    private fun locate(program: List<OpCode>, mark: String) =
+        program.indexOfFirst { it is OpCode.Mark && it.name == mark }
+            .takeIf { it >= 0 } ?: error("Метка '$mark' не найдена")  // поиск метки
+
+    private fun eval(expr: Expr): Int = when (expr) {
+        is Expr.Const -> expr.v  // константа
+        is Expr.VarRef -> scalars[expr.id] ?: error("Переменной '${expr.id}' нет")  // чтение скаляра
+        is Expr.Ref -> buffers[expr.id]?.get(eval(expr.idx)) ?: error("Массива '${expr.id}' нет")  // чтение ячейки массива
+        is Expr.Bin -> {
+            val a = eval(expr.left); val b = eval(expr.right)
+            when (expr.op) {
+                Op.ADD -> a + b; Op.SUB -> a - b; Op.MUL -> a * b; Op.DIV -> a / b
+                Op.LT -> if (a < b) 1 else 0; Op.GT -> if (a > b) 1 else 0
+                Op.EQ -> if (a == b) 1 else 0; Op.NE -> if (a != b) 1 else 0
+                Op.LE -> if (a <= b) 1 else 0; Op.GE -> if (a >= b) 1 else 0
+                Op.AND -> if (a != 0 && b != 0) 1 else 0; Op.OR -> if (a != 0 || b != 0) 1 else 0
+            }
+        }
+    }
+}
+
+sealed class OpCode {
+    data class Decl(val id: String, val length: Int? = null): OpCode()
+    data class Set(val id: String, val index: Expr? = null, val expr: Expr): OpCode()
+    data class CondJump(val cond: Expr, val mark: String): OpCode()
+    data class Jump(val mark: String): OpCode()
+    data class Mark(val name: String): OpCode()
+}
+
+enum class Op { ADD, SUB, MUL, DIV, LT, GT, EQ, NE, LE, GE, AND, OR }
+
+sealed class Expr {
+    data class Const(val v: Int): Expr()
+    data class VarRef(val id: String): Expr()
+    data class Ref(val id: String, val idx: Expr): Expr()
+    data class Bin(val left: Expr, val op: Op, val right: Expr): Expr()
+}
+
+fun main() {
+    val size = 6  // размер массива
+    val program = mutableListOf<OpCode>().apply {
+        add(OpCode.Decl("data", size))
+        add(OpCode.Decl("outer")); add(OpCode.Decl("inner")); add(OpCode.Decl("temp"))
+
+        for (i in 0 until size) add(
+            OpCode.Set("data", Expr.Const(i), Expr.Const((size - i) * 3))
+        )  // заполнение массива
+
+        add(OpCode.Set("outer", Expr.Const(0)))
+        add(OpCode.Mark("O_LOOP"))
+        add(OpCode.CondJump(Expr.Bin(Expr.VarRef("outer"), Op.LT, Expr.Const(size - 1)), "I_INIT"))
+        add(OpCode.Jump("END"))
+
+        add(OpCode.Mark("I_INIT")); add(OpCode.Set("inner", Expr.Const(0)))
+        add(OpCode.Mark("I_LOOP"))
+        add(OpCode.CondJump(
+            Expr.Bin(Expr.VarRef("inner"), Op.LT,
+                Expr.Bin(Expr.Const(size), Op.SUB, Expr.Bin(Expr.VarRef("outer"), Op.ADD, Expr.Const(1)))
+            ), "COMPARE"
+        ))
+        add(OpCode.Jump("AFTER"))
+
+        add(OpCode.Mark("COMPARE"))
+        add(OpCode.CondJump(
+            Expr.Bin(Expr.Ref("data", Expr.VarRef("inner")), Op.GT,
+                Expr.Ref("data", Expr.Bin(Expr.VarRef("inner"), Op.ADD, Expr.Const(1)))
+            ), "SWAP"
+        ))
+        add(OpCode.Jump("NOSWAP"))
+
+        add(OpCode.Mark("SWAP"))
+        add(OpCode.Set("temp", Expr.Ref("data", Expr.VarRef("inner"))))
+        add(OpCode.Set("data", Expr.VarRef("inner"), Expr.Ref("data", Expr.Bin(Expr.VarRef("inner"), Op.ADD, Expr.Const(1)))))
+        add(OpCode.Set("data", Expr.Bin(Expr.VarRef("inner"), Op.ADD, Expr.Const(1)), Expr.VarRef("temp")))
+        add(OpCode.Mark("NOSWAP"))
+
+        add(OpCode.Set("inner", Expr.Bin(Expr.VarRef("inner"), Op.ADD, Expr.Const(1))))
+        add(OpCode.Jump("I_LOOP"))
+
+        add(OpCode.Mark("AFTER"))
+        add(OpCode.Set("outer", Expr.Bin(Expr.VarRef("outer"), Op.ADD, Expr.Const(1))))
+        add(OpCode.Jump("O_LOOP"))
+
+        add(OpCode.Mark("END"))
+    }
+
+    val engine = Engine()
+    engine.run(program)
+    println("Отсортированный массив:")
+    for (i in 0 until size) println("data[${i}] = ${engine.buffers["data"]?.get(i)}")  // вывод результата
+}
